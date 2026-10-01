@@ -40,7 +40,10 @@
   ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
   li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--texte-2)}
   .coche{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--ok-fond);color:var(--ok);
-         display:grid;place-items:center;font-size:12px;font-weight:700;margin-top:1px}
+         display:grid;place-items:center;margin-top:1px}
+  /* Coche dessinée en CSS : aucun caractère typographique détourné en icône */
+  .coche::after{content:"";width:5px;height:9px;border:solid currentColor;
+                border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
   a{color:var(--accent)}
   code{background:var(--fond);border:1px solid var(--bord);border-radius:6px;padding:1px 6px;font-size:12.5px}
 </style>
@@ -73,12 +76,12 @@
 
   <h2>Ce qui change concrètement</h2>
   <ul>
-    <li><span class="coche">✓</span> Les 15 emojis laissent la place à des icônes SVG cohérentes (même grille, même épaisseur de trait).</li>
-    <li><span class="coche">✓</span> Le message de vérification technique devient un bandeau lisible : un titre court, une explication en français, et le jargon replié sous « Détails techniques ».</li>
-    <li><span class="coche">✓</span> Les cinq boutons de tailles disparates deviennent une hiérarchie claire : une action principale, une secondaire, les autres en retrait.</li>
-    <li><span class="coche">✓</span> Plus aucun libellé coupé : les textes se replient au lieu d'être tronqués par le bord de l'écran.</li>
-    <li><span class="coche">✓</span> Le bouton flottant qui masquait les actions est remplacé par une barre de navigation basse, avec le compteur des champs à traiter.</li>
-    <li><span class="coche">✓</span> Thème clair et sombre, focus clavier visible, zones tactiles de 40 px minimum.</li>
+    <li><span class="coche" aria-hidden="true"></span> Les 15 emojis laissent la place à des icônes SVG cohérentes (même grille, même épaisseur de trait).</li>
+    <li><span class="coche" aria-hidden="true"></span> Le message de vérification technique devient un bandeau lisible : un titre court, une explication en français, et le jargon replié sous « Détails techniques ».</li>
+    <li><span class="coche" aria-hidden="true"></span> Les cinq boutons de tailles disparates deviennent une hiérarchie claire : une action principale, une secondaire, les autres en retrait.</li>
+    <li><span class="coche" aria-hidden="true"></span> Plus aucun libellé coupé : les textes se replient au lieu d'être tronqués par le bord de l'écran.</li>
+    <li><span class="coche" aria-hidden="true"></span> Le bouton flottant qui masquait les actions est remplacé par une barre de navigation basse, avec le compteur des champs à traiter.</li>
+    <li><span class="coche" aria-hidden="true"></span> Thème clair et sombre, focus clavier visible, zones tactiles de 40 px minimum.</li>
   </ul>
 
   <h2>Pour aller plus loin</h2>
