@@ -31,8 +31,12 @@ demandes du rectorat.
 
 ```
 .
-├── design/            # Maquettes et design system (HTML/CSS autonome)
-│   └── index.html     # Écran « Vue d'ensemble » — refonte professionnelle
+├── design/
+│   ├── index.html              # Maquette de l'écran « Vue d'ensemble » (autonome)
+│   └── ists-design-system.css  # Design system extrait, prêt à intégrer
+├── tools/
+│   ├── audit-ui.mjs            # Audit qualité d'interface (sans dépendance)
+│   └── extraire-design-system.py
 └── README.md
 ```
 
@@ -47,6 +51,32 @@ Ouvrir la maquette :
 python3 -m http.server 8000 --directory design
 # puis http://localhost:8000
 ```
+
+## Outils
+
+### Audit qualité d'interface
+
+Contrôle automatique d'un écran avant intégration : emojis utilisés comme
+icônes, libellés tronqués, largeurs fixes qui débordent, contour de focus
+supprimé, bouton-icône sans nom accessible, image sans `alt`, `viewport` ou
+`lang` manquants, hiérarchie de titres discontinue.
+
+```bash
+node tools/audit-ui.mjs design/index.html        # rapport lisible
+node tools/audit-ui.mjs --json design/index.html # sortie JSON (CI)
+```
+
+Le code de sortie vaut `1` si au moins une **erreur** est détectée : le script
+peut donc servir de garde-fou dans une chaîne d'intégration continue.
+
+### Extraction du design system
+
+```bash
+python3 tools/extraire-design-system.py
+```
+
+Régénère `design/ists-design-system.css` à partir de la maquette, afin qu'il
+n'existe qu'une seule source de vérité.
 
 ## Conventions de code
 
