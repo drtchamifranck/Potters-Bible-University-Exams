@@ -26,6 +26,39 @@ const RE_EMOJI = /\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictograp
 // Symboles typographiques souvent détournés en icônes : tolérés mais signalés
 const RE_SYMBOLE = /[✓✔✗✘★☆⇒➜➔⬅➡⬆⬇]/gu;
 
+/**
+ * Familles d'actions : plusieurs formulations désignent la même opération.
+ * Sert à repérer un doublon même lorsque les libellés diffèrent
+ * (« Récupérer TOUT » d'un côté, « Récupération complète » de l'autre).
+ * Seules les commandes lourdes y figurent : les liens de consultation
+ * (aperçu + « voir tout ») sont un usage normal et ne sont pas signalés.
+ */
+const FAMILLES_ACTIONS = {
+  'recuperation-complete': [
+    'recuperer tout', 'tout recuperer', 'recuperation complete', 'restaurer tout',
+    'historique complet', 'recherche complete', 'tout l historique', 'parcourir tout l historique',
+  ],
+  'recuperer-maintenant': [
+    'recuperer maintenant', 'recuperer les champs', 'completer les dossiers', 'completer les champs',
+  ],
+  'recuperer-etudiants': [
+    'recuperer les etudiants', 'recuperer les dossiers', 'restaurer les etudiants',
+  ],
+  'telecharger-sauvegarde': [
+    'telecharger une sauvegarde', 'telecharger la sauvegarde', 'exporter la base', 'export de la base',
+    'exporter une sauvegarde',
+  ],
+  'importer-sauvegarde': [
+    'importer une sauvegarde', 'importer une archive', 'charger une archive', 'restaurer une sauvegarde',
+  ],
+  'auditer-dossiers': [
+    'auditer les dossiers', 'audit des dossiers', 'controle d integrite', 'verifier l integrite',
+  ],
+  'verifier-demandes': [
+    'verifier les demandes', 'verifier les nouvelles demandes', 'traiter les demandes',
+  ],
+};
+
 const REGLES = [
   {
     id: 'emoji',
@@ -80,6 +113,12 @@ const REGLES = [
     gravite: 'avertissement',
     titre: 'Balise <font> ou style de couleur en ligne',
     conseil: 'Passer par les jetons de couleur du design system.',
+  },
+  {
+    id: 'action-dupliquee',
+    gravite: 'erreur',
+    titre: 'Action probablement dupliquée',
+    conseil: 'Ne garder qu’un seul point d’entrée par action : une même opération proposée à deux endroits sème le doute.',
   },
   {
     id: 'symbole-texte',
@@ -184,6 +223,55 @@ function analyserBalises(src, res) {
   }
 }
 
+/**
+ * Repère une même action proposée deux fois dans la page.
+ *
+ * Deux libellés sont considérés comme doublons lorsqu'ils partagent un préfixe
+ * distinctif (au moins 15 caractères, soit « récupérer tout ») et comptent au
+ * moins trois mots. Ce seuil laisse passer les actions répétées ligne par ligne
+ * (« Récupérer » dans un tableau) tout en signalant les vrais doublons.
+ */
+function analyserActionsDupliquees(src, res) {
+  const sansAccent = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const normaliserLibelle = (t) => sansAccent(t)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+  const familleDe = (cle) => {
+    for (const [famille, formulations] of Object.entries(FAMILLES_ACTIONS)) {
+      if (formulations.some((f) => cle.includes(f))) return famille;
+    }
+    return null;
+  };
+
+  const libelles = [];
+  for (const m of src.matchAll(/<(?:button|a)\b[^>]*>([\s\S]*?)<\/(?:button|a)>/gi)) {
+    const texte = m[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!texte) continue;
+    const cle = normaliserLibelle(texte);
+    const famille = familleDe(cle);
+    // Les libellés d'une seule syllabe (actions de tableau répétées) sont ignorés,
+    // sauf s'ils appartiennent à une famille d'actions lourdes.
+    if (!cle || (!famille && cle.split(' ').length < 3)) continue;
+    libelles.push({ cle, texte, index: m.index, famille });
+  }
+
+  const LONGUEUR_PREFIXE = 15;
+  for (let i = 0; i < libelles.length; i++) {
+    for (let j = i + 1; j < libelles.length; j++) {
+      const a = libelles[i], b = libelles[j];
+      const memePrefixe = a.cle.slice(0, LONGUEUR_PREFIXE) === b.cle.slice(0, LONGUEUR_PREFIXE)
+        && a.cle.split(' ').length >= 3 && b.cle.split(' ').length >= 3;
+      const memeFamille = a.famille && a.famille === b.famille;
+      if (!memePrefixe && !memeFamille) continue;
+      const motif = memeFamille ? `même action « ${a.famille} »` : 'libellés quasi identiques';
+      signaler(res, REGLES.find((r) => r.id === 'action-dupliquee'), src, b.index,
+        `${motif} : « ${a.texte} » (ligne ${position(src, a.index).ligne}) et « ${b.texte} »`);
+    }
+  }
+}
+
 /** Vérifie la continuité de la hiérarchie des titres (h1 → h2 → h3). */
 function analyserTitres(src, res) {
   const niveaux = [...src.matchAll(/<h([1-6])\b/gi)].map((m) => Number(m[1]));
@@ -215,6 +303,7 @@ export function auditer(chemin) {
   analyserEmojis(src, brut, res);
   analyserStyles(src, res);
   analyserBalises(src, res);
+  analyserActionsDupliquees(src, res);
   analyserTitres(src, res);
 
   res.sort((a, b) => a.ligne - b.ligne || a.colonne - b.colonne);

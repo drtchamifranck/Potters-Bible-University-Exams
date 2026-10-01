@@ -67,7 +67,9 @@ python3 -m http.server 8000 --directory design
 Contrôle automatique d'un écran avant intégration : emojis utilisés comme
 icônes, libellés tronqués, largeurs fixes qui débordent, contour de focus
 supprimé, bouton-icône sans nom accessible, image sans `alt`, `viewport` ou
-`lang` manquants, hiérarchie de titres discontinue.
+`lang` manquants, hiérarchie de titres discontinue, et **action proposée deux
+fois** — y compris lorsque les libellés diffèrent (« Récupérer TOUT » d'un
+côté, « Récupération complète » de l'autre).
 
 ```bash
 node tools/audit-ui.mjs design/index.html        # rapport lisible

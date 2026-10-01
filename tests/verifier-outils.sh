@@ -49,12 +49,15 @@ echo "1. Maquette de référence"
 node tools/audit-ui.mjs "$MAQUETTE" --json > "$TRAVAIL/maquette.json"
 verifier "aucune erreur dans la maquette" "0" "$(nombre_regle "$TRAVAIL/maquette.json" emoji)"
 
+verifier "aucune action en double dans la maquette refondue" "0" "$(nombre_regle "$TRAVAIL/maquette.json" action-dupliquee)"
+
 echo
 echo "2. Détection : écran V8 avant refonte (banc d'essai)"
 node tools/audit-ui.mjs "$FIXTURE" --json > "$TRAVAIL/avant.json"
 verifier "15 emojis-icônes détectés" "15" "$(nombre_regle "$TRAVAIL/avant.json" emoji)"
 verifier_vrai "largeurs fixes détectées" test "$(nombre_regle "$TRAVAIL/avant.json" largeur-fixe)" -ge 1
 verifier_vrai "contour de focus supprimé détecté" test "$(nombre_regle "$TRAVAIL/avant.json" outline-none)" -ge 1
+verifier "action dupliquée détectée (« Récupérer TOUT » en double)" "1" "$(nombre_regle "$TRAVAIL/avant.json" action-dupliquee)"
 if node tools/audit-ui.mjs "$FIXTURE" --json >/dev/null 2>&1; then
   echec "l'audit signale un écran non conforme (code de sortie 1)"
 else

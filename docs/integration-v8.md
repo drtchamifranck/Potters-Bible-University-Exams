@@ -123,6 +123,16 @@ défauts structurels doivent être corrigés dans votre fichier d'origine :
 | `<html>` sans attribut `lang` | Ajouter `lang="fr"` (lecteurs d'écran, correcteur orthographique). |
 | `button:focus{outline:none}` | Remplacer par un anneau visible via `:focus-visible` — condition d'accessibilité clavier. |
 | Largeurs en dur (`width:320px`) et libellés `nowrap` tronqués | Remplacer par `minmax(0, 1fr)` et laisser les libellés revenir à la ligne. |
+| « Récupérer TOUT » proposé deux fois : dans le panneau de vérification (tout l'historique) et dans la liste des outils (recherche complète) | Ne garder qu'**un seul point d'entrée** par action : l'opération lourde dans la liste des outils, l'action immédiate dans le panneau. Dans la refonte, le panneau ne propose plus que « Récupérer maintenant », « Voir le détail » et « Reporter ». |
+
+### Actions en double
+
+Deux boutons qui déclenchent la même opération aux deux endroits de l'écran
+sèment le doute : l'utilisateur ne sait pas lequel choisir, ni s'ils font la
+même chose. L'audit le signale sous la règle `action-dupliquee`, y compris
+lorsque les libellés ne se ressemblent pas, grâce au dictionnaire de familles
+d'actions (`FAMILLES_ACTIONS` dans `tools/audit-ui.mjs`). Pour ajouter une
+équivalence propre à votre application, complétez ce dictionnaire.
 
 Ces quatre points sont exactement ceux que l'audit signale encore après
 l'intégration.
