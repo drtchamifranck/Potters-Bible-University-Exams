@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Comparaison avant / après · ISTS Campus</title>
+<style>
+  :root{
+    --fond:#f4f6f9; --carte:#fff; --bord:#dde3ec; --texte:#0f1a2b;
+    --texte-2:#3f4d63; --muet:#6b7a92; --marque:#1b3f77; --accent:#2563eb;
+    --ok:#0f6b52; --ok-fond:#e8f5f0; --alerte:#9a5b00; --alerte-fond:#fdf5e6;
+    --police:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--fond:#0b1220;--carte:#111a2b;--bord:#26334b;--texte:#eaf0f8;
+          --texte-2:#c2cddc;--muet:#93a2b8;--marque:#9dc0ff;--accent:#6ea8fe;
+          --ok:#7fd8bd;--ok-fond:#122b25;--alerte:#f0c07a;--alerte-fond:#2c2413;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fond);color:var(--texte);font-family:var(--police);
+       line-height:1.5;padding:28px 18px 60px}
+  .contenu{max-width:1080px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:-.02em;margin:0 0 6px}
+  .intro{color:var(--muet);margin:0 0 26px;max-width:70ch}
+  .grille{display:grid;gap:22px;grid-template-columns:1fr}
+  @media (min-width:900px){.grille{grid-template-columns:1fr 1fr}}
+  .colonne{background:var(--carte);border:1px solid var(--bord);border-radius:16px;
+           overflow:hidden;box-shadow:0 1px 3px rgba(15,26,43,.06)}
+  .entete{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--bord);
+          font-size:14px;font-weight:650}
+  .pastille{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+            padding:3px 9px;border-radius:999px}
+  .pastille--avant{background:var(--alerte-fond);color:var(--alerte)}
+  .pastille--apres{background:var(--ok-fond);color:var(--ok)}
+  .note{color:var(--muet);font-size:12.5px;font-weight:500;margin-left:auto}
+  .cadre{background:#fff;padding:0;height:660px}
+  .cadre iframe{width:100%;height:100%;border:0;display:block}
+  h2{font-size:16px;margin:34px 0 12px;letter-spacing:-.01em}
+  ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--texte-2)}
+  .coche{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--ok-fond);color:var(--ok);
+         display:grid;place-items:center;font-size:12px;font-weight:700;margin-top:1px}
+  a{color:var(--accent)}
+  code{background:var(--fond);border:1px solid var(--bord);border-radius:6px;padding:1px 6px;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="contenu">
+  <h1>ISTs Campus — écran « Vue d'ensemble »</h1>
+  <p class="intro">
+    À gauche l'écran actuel (reconstitution de la V8), à droite la refonte proposée.
+    Les deux cadres sont de vrais rendus, affichés à la largeur d'un téléphone.
+  </p>
+
+  <div class="grille">
+    <section class="colonne">
+      <div class="entete">
+        <span class="pastille pastille--avant">Avant</span>
+        <span class="note">V8 actuelle · 19 défauts relevés</span>
+      </div>
+      <div class="cadre"><iframe src="../tests/fixtures/avant-v8.html" title="Écran actuel" loading="lazy"></iframe></div>
+    </section>
+
+    <section class="colonne">
+      <div class="entete">
+        <span class="pastille pastille--apres">Après</span>
+        <span class="note">Refonte · 0 défaut</span>
+      </div>
+      <div class="cadre"><iframe src="index.html" title="Écran refondu" loading="lazy"></iframe></div>
+    </section>
+  </div>
+
+  <h2>Ce qui change concrètement</h2>
+  <ul>
+    <li><span class="coche">✓</span> Les 15 emojis laissent la place à des icônes SVG cohérentes (même grille, même épaisseur de trait).</li>
+    <li><span class="coche">✓</span> Le message de vérification technique devient un bandeau lisible : un titre court, une explication en français, et le jargon replié sous « Détails techniques ».</li>
+    <li><span class="coche">✓</span> Les cinq boutons de tailles disparates deviennent une hiérarchie claire : une action principale, une secondaire, les autres en retrait.</li>
+    <li><span class="coche">✓</span> Plus aucun libellé coupé : les textes se replient au lieu d'être tronqués par le bord de l'écran.</li>
+    <li><span class="coche">✓</span> Le bouton flottant qui masquait les actions est remplacé par une barre de navigation basse, avec le compteur des champs à traiter.</li>
+    <li><span class="coche">✓</span> Thème clair et sombre, focus clavier visible, zones tactiles de 40 px minimum.</li>
+  </ul>
+
+  <h2>Pour aller plus loin</h2>
+  <p class="intro">
+    Procédure d'intégration : <code>docs/integration-v8.md</code> ·
+    Audit d'un fichier : <code>node tools/audit-ui.mjs app.html</code> ·
+    Contrôles : <code>bash tests/verifier-outils.sh</code>
+  </p>
+</div>
+</body>
+</html>

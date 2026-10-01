@@ -33,6 +33,7 @@ demandes du rectorat.
 .
 ├── design/
 │   ├── index.html                       # Maquette de l'écran « Vue d'ensemble » (autonome)
+│   ├── comparaison.html                 # Avant / après, côte à côte
 │   ├── ists-design-system.css           # Design system extrait (généré)
 │   └── ists-design-system.scope.css     # Version portée par .ists-v9 (généré)
 ├── docs/
