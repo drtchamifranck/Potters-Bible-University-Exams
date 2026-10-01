@@ -1,5 +1,7 @@
 # Potter's Bible University — ISTS Campus
 
+[![Vérifications](https://github.com/drtchamifranck/Potters-Bible-University-Exams/actions/workflows/verifications.yml/badge.svg)](https://github.com/drtchamifranck/Potters-Bible-University-Exams/actions/workflows/verifications.yml)
+
 Système de gestion des dossiers étudiants et des examens du **Rectorat ISTS**
 (Potter's Bible University). L'application permet de consulter, compléter et
 auditer les dossiers étudiants, de gérer les sauvegardes et de suivre les
@@ -38,7 +40,9 @@ demandes du rectorat.
 │   └── ists-design-system.scope.css     # Version portée par .ists-v9 (généré)
 ├── docs/
 │   ├── integration-v8.md                # Procédure d'intégration à l'application V8
-│   └── bloc-vue-ensemble.html           # Section prête à coller (générée)
+│   ├── bloc-vue-ensemble.html           # Section prête à coller (générée)
+│   └── apercu-bloc.html                 # Aperçu du bloc collé (généré)
+├── .github/workflows/verifications.yml  # Intégration continue
 ├── tools/
 │   ├── audit-ui.mjs                     # Audit qualité d'interface (sans dépendance)
 │   ├── extraire-design-system.py        # Génère les deux feuilles CSS
@@ -123,6 +127,11 @@ outil ni ligne de commande. Le bloc est autonome et isolé — classes préfixé
 `ists-`, style porté par `.ists-v9` — et les contrôles à relier sont annotés
 `data-action="TODO"`, annotation que l'audit signale.
 
+Le script produit également `docs/apercu-bloc.html` : une page autonome qui
+montre le rendu exact du bloc une fois collé, y compris dans une page dont la
+feuille de style redéfinit volontairement `.btn`, `.card` et `.stat__value`,
+afin de démontrer l'isolation.
+
 Procédure détaillée : **[docs/integration-v8.md](docs/integration-v8.md)**.
 
 ### Contrôles automatiques
@@ -134,6 +143,20 @@ bash tests/verifier-outils.sh
 Vérifie la chaîne complète sur un banc d'essai (`tests/fixtures/avant-v8.html`)
 qui reproduit l'écran avant refonte : détection des défauts, intégration,
 préservation du code applicatif, idempotence, cloisonnement du CSS.
+
+## Intégration continue
+
+Le fichier `.github/workflows/verifications.yml` rejoue automatiquement, à
+chaque envoi :
+
+1. la régénération des fichiers dérivés et le contrôle qu'ils correspondent
+   bien aux sources (`git diff` vide) ;
+2. l'audit de la maquette (aucune erreur admise) ;
+3. les 24 contrôles de la chaîne d'outils ;
+4. les 14 contrôles du bloc prêt à coller.
+
+Ces vérifications n'ont besoin d'aucun service externe : elles s'exécutent à
+l'identique en local avec les commandes de la section [Outils](#outils).
 
 ## Conventions de code
 

@@ -1,0 +1,59 @@
+name: Vérifications
+
+# Contrôle automatique de la qualité d'interface et de la chaîne d'outils.
+# Ces vérifications ne dépendent d'aucun service externe : elles s'exécutent
+# aussi bien sur GitHub qu'en local (voir README.md).
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualite:
+    name: Audit et tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Régénérer les fichiers dérivés
+        run: |
+          python3 tools/extraire-design-system.py
+          python3 tools/generer-bloc.py
+
+      - name: Vérifier que les fichiers générés sont à jour
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Les fichiers générés ne correspondent pas aux sources."
+            echo "Lancez en local :"
+            echo "  python3 tools/extraire-design-system.py"
+            echo "  python3 tools/generer-bloc.py"
+            git diff --stat
+            exit 1
+          fi
+
+      - name: Auditer la maquette
+        run: node tools/audit-ui.mjs design/index.html
+
+      - name: Vérifier la chaîne d'outils
+        run: bash tests/verifier-outils.sh
+
+      - name: Vérifier le bloc prêt à coller
+        run: python3 tests/verifier-bloc.py

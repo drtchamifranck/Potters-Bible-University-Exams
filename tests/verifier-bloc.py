@@ -23,6 +23,7 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
 BLOC = RACINE / "docs" / "bloc-vue-ensemble.html"
+APERCU = RACINE / "docs" / "apercu-bloc.html"
 PREFIXE = "ists-"
 
 # Classes volontairement sans règle CSS (portées par un parent, ou utilitaires).
@@ -155,6 +156,26 @@ def main() -> int:
     controler(not analyseur.erreurs and not analyseur.pile,
               "balisage équilibré (aucune balise orpheline)",
               "; ".join(analyseur.erreurs[:5]) or f"non fermées : {analyseur.pile[:5]}")
+
+    # 7. Aperçu : le bloc doit être visualisable tel quel --------------------
+    controler(APERCU.exists(), "page d'aperçu générée")
+    if APERCU.exists():
+        apercu = APERCU.read_text(encoding="utf-8")
+        controler(
+            all(m in apercu for m in ('ists-design-system', 'ists-icon-sprite', 'class="ists-v9"')),
+            "l'aperçu embarque la feuille, les icônes et la section",
+        )
+        # L'aperçu simule une feuille hôte conflictuelle : le rendu doit y résister
+        resultat = subprocess.run(
+            ["node", str(RACINE / "tools" / "audit-ui.mjs"), "--json", str(APERCU)],
+            capture_output=True, text=True, cwd=RACINE,
+        )
+        import json
+
+        rapport = json.loads(resultat.stdout)[0]
+        erreurs = [r for r in rapport["resultats"] if r["gravite"] == "erreur"]
+        controler(not erreurs, "aucune erreur dans l'aperçu",
+                  "\n         ".join(f"{r['titre']} (ligne {r['ligne']})" for r in erreurs[:5]))
 
     print(f"\n  Total : {controles - len(echecs)}/{controles} contrôles réussis\n")
     return 1 if echecs else 0

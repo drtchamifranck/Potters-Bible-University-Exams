@@ -31,6 +31,7 @@ RACINE = Path(__file__).resolve().parent.parent
 MAQUETTE = RACINE / "design" / "index.html"
 CSS_PORTE = RACINE / "design" / "ists-design-system.scope.css"
 CIBLE = RACINE / "docs" / "bloc-vue-ensemble.html"
+APERCU = RACINE / "docs" / "apercu-bloc.html"
 
 PREFIXE = "ists-"
 PORTEE = f".{PREFIXE}v9"
@@ -134,6 +135,42 @@ ENTETE = """<!-- ===============================================================
 """
 
 
+APERCU_GABARIT = """<!DOCTYPE html>
+<!-- Aperçu du bloc collé — généré par tools/generer-bloc.py.
+     Montre le rendu exact de la section telle qu'elle apparaîtra une fois
+     collée dans l'application. La feuille ci-dessous joue le rôle de la
+     feuille de style de l'application hôte : elle définit volontairement des
+     noms courants (.btn, .card, .stat__value) pour démontrer l'isolation. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Aperçu du bloc collé · ISTS Campus</title>
+<style>
+  /* Feuille de style « hôte », conflictuelle à dessein. */
+  body {{ margin: 0; background: #fbf7ee; font-family: Georgia, serif; }}
+  .btn {{ background: #e2bd63; border-radius: 0; padding: 20px; border: 0; }}
+  .card {{ box-shadow: none; border: 3px solid red; }}
+  .stat__value {{ font-size: 72px; color: magenta; }}
+  table {{ border-collapse: separate; border-spacing: 8px; }}
+  .bandeau {{ padding: 10px 16px; background: #17202e; color: #fff; font-family: system-ui, sans-serif; font-size: 13px; }}
+  .bandeau strong {{ color: #e2bd63; }}
+</style>
+</head>
+<body>
+<p class="bandeau">
+  <strong>Aperçu du bloc collé.</strong>
+  La feuille ci-dessus redéfinit volontairement <code>.btn</code>, <code>.card</code>
+  et <code>.stat__value</code> : le rendu ci-dessous n'en subit aucun effet.
+</p>
+
+{bloc}
+</body>
+</html>
+"""
+
+
 def main() -> int:
     if not MAQUETTE.exists():
         print(f"Maquette introuvable : {MAQUETTE}", file=sys.stderr)
@@ -172,6 +209,7 @@ def main() -> int:
     )
 
     CIBLE.write_text(bloc, encoding="utf-8")
+    APERCU.write_text(APERCU_GABARIT.format(bloc=bloc), encoding="utf-8")
 
     # --- rapport -----------------------------------------------------------
     print(f"\nGénéré : {CIBLE.relative_to(RACINE)} ({CIBLE.stat().st_size} octets)")

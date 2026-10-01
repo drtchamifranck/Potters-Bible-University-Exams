@@ -39,6 +39,10 @@ ne peuvent pas se dupliquer si vous passez de l'une à l'autre.
 Le fichier **[bloc-vue-ensemble.html](bloc-vue-ensemble.html)** contient la
 section complète : programme de style, vingt et une icônes SVG et structure.
 
+0. Regardez le résultat attendu dans `docs/apercu-bloc.html` — la section y
+   apparaît telle qu'elle sera après collage, y compris dans une page dont la
+   feuille de style définit des noms courants (`.btn`, `.card`) : l'isolation
+   y est démontrée.
 1. Ouvrez votre fichier `ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8…html`.
 2. Repérez votre section « Vue d'ensemble » et remplacez-la par tout le contenu
    de `bloc-vue-ensemble.html`, du `<section>` initial jusqu'à `</section>`.
