@@ -62,7 +62,7 @@ def main() -> int:
         controler(marqueur in source, description, f"marqueur absent : {marqueur}")
 
     # 2/3. Classes du balisage ---------------------------------------------
-    balisage = source[source.index('<section class="ists-v9"'):]
+    balisage = source[source.index('<section class="ists-v9"'):]   # balisage seul, sans l'en-tête
     classes = set()
     for attribut in re.findall(r'class="([^"]+)"', balisage):
         classes.update(attribut.split())
@@ -121,10 +121,15 @@ def main() -> int:
                   "\n         ".join(f"{r['titre']} (ligne {r['ligne']})" for r in erreurs[:5]))
 
         restants = [r for r in rapport["resultats"] if r["regle"] == "todo-restant"]
-        attendus = source.count('data-action="TODO"')
+        attendus = balisage.count('data-action="TODO"')
         controler(len(restants) == attendus,
                   f"les {attendus} contrôles à relier sont signalés",
                   f"signalés : {len(restants)}")
+
+        demo = [r for r in rapport["resultats"] if r["regle"] == "donnee-exemple"]
+        controler(len(demo) == 5,
+                  "les 5 zones de démonstration sont signalées à l'intégrateur",
+                  f"signalées : {len(demo)}")
 
     # 6. Structure : le balisage doit être équilibré ------------------------
     from html.parser import HTMLParser
@@ -156,6 +161,14 @@ def main() -> int:
     controler(not analyseur.erreurs and not analyseur.pile,
               "balisage équilibré (aucune balise orpheline)",
               "; ".join(analyseur.erreurs[:5]) or f"non fermées : {analyseur.pile[:5]}")
+
+    # 6 bis. Données de démonstration ---------------------------------------
+    zones = re.findall(r'data-donnee-exemple="([^"]*)"', source)
+    controler(len(zones) == 5, "les 5 zones de données de démonstration sont balisées",
+              f"balisées : {len(zones)} — {zones}")
+    controler(all(z.strip() for z in zones),
+              "chaque zone de démonstration décrit son contenu",
+              "description vide dans : " + str([z for z in zones if not z.strip()]))
 
     # 7. Aperçu : le bloc doit être visualisable tel quel --------------------
     controler(APERCU.exists(), "page d'aperçu générée")

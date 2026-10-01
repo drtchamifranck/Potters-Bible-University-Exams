@@ -76,8 +76,8 @@ icônes, libellés tronqués, largeurs fixes qui débordent, contour de focus
 supprimé, bouton-icône sans nom accessible, image sans `alt`, `viewport` ou
 `lang` manquants, hiérarchie de titres discontinue, **action proposée deux
 fois** — y compris lorsque les libellés diffèrent (« Récupérer TOUT » d'un
-côté, « Récupération complète » de l'autre) — et **contrôle resté à relier**
-(`data-action="TODO"`).
+côté, « Récupération complète » de l'autre) — **contrôle resté à relier**
+(`data-action="TODO"`) et **donnée de démonstration** (`data-donnee-exemple`).
 
 Sur un extrait de page (fragment), les contrôles propres au document entier
 (`viewport`, `lang`) sont automatiquement désactivés.
@@ -125,7 +125,15 @@ Produit `docs/bloc-vue-ensemble.html` : la section « Vue d'ensemble » complèt
 (style, icônes et structure) à coller directement dans l'application, sans
 outil ni ligne de commande. Le bloc est autonome et isolé — classes préfixées
 `ists-`, style porté par `.ists-v9` — et les contrôles à relier sont annotés
-`data-action="TODO"`, annotation que l'audit signale.
+`data-action="TODO"`. Les cinq zones contenant des données fictives portent
+`data-donnee-exemple`, dont la valeur décrit ce qu'il faut y mettre.
+
+Après collage, l'audit signale donc :
+
+```
+15 avertissements « Annotation TODO »         → boutons à relier
+ 5 avertissements « Donnée de démonstration »  → données à remplacer
+```
 
 Le script produit également `docs/apercu-bloc.html` : une page autonome qui
 montre le rendu exact du bloc une fois collé, y compris dans une page dont la

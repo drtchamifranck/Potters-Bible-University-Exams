@@ -53,7 +53,21 @@ section complète : programme de style, vingt et une icônes SVG et structure.
            onclick="recupererMaintenant()">
    ```
 
-4. Ajoutez dans votre `<head>` :
+4. **Remplacez les données de démonstration.** Les chiffres et les noms du
+   bloc sont fictifs. Les cinq zones concernées portent l'attribut
+   `data-donnee-exemple`, dont la valeur décrit ce qu'elles contiennent :
+
+   | Zone | Contenu à remplacer |
+   | --- | --- |
+   | `page-head__meta` | horodatage de la dernière vérification |
+   | bandeau d'intégrité | nombre de champs détectés, horodatage, n° de rapport |
+   | `.stats` | les quatre indicateurs clés |
+   | tableau | lignes : étudiant, matricule, champ, date de sauvegarde |
+   | `aside` | état de la base et activité récente |
+
+   Une fois rempli, retirez l'attribut : l'audit cesse alors de le signaler.
+
+5. Ajoutez dans votre `<head>` :
 
    ```html
    <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -61,8 +75,9 @@ section complète : programme de style, vingt et une icônes SVG et structure.
 
    et `lang="fr"` sur votre balise `<html>`.
 
-5. Vérifiez : `node tools/audit-ui.mjs votre-fichier.html` — il vous reste à
-   relier les 15 contrôles signalés sous la règle `todo-restant`.
+6. Vérifiez : `node tools/audit-ui.mjs votre-fichier.html`. Objectif : plus
+   aucun avertissement `todo-restant` (15 contrôles) ni `donnee-exemple`
+   (5 zones). Tant qu'il en reste, l'audit vous indique lesquels et où.
 
 Le bloc est **isolé** : toutes ses classes portent le préfixe `ists-`, et son
 style est porté par `.ists-v9`. Même si votre feuille de style définit déjà
@@ -164,6 +179,14 @@ mv "ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8-corrige.html.bak" \
 ---
 
 ## 3. Ce qui reste à faire à la main
+
+Deux catégories de travail, toutes deux signalées par l'audit :
+
+| Règle | Nombre | Nature |
+| --- | --- | --- |
+| `todo-restant` | 15 | Boutons à relier à vos fonctions existantes |
+| `donnee-exemple` | 5 | Zones contenant des données fictives à remplacer |
+
 
 L'intégration automatique traite les icônes et la couche visuelle. Trois
 défauts structurels doivent être corrigés dans votre fichier d'origine :

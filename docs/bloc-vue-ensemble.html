@@ -22,11 +22,28 @@
          .ists-v9 : aucun risque de conflit avec votre propre feuille.
 
      À FAIRE APRÈS LE COLLAGE
-       · Sur chaque bouton d'action, remplacez l'annotation TODO par votre
-         fonction existante. Exemple :
-             <button class="ists-btn ists-btn--primary" type="button"
-                     onclick="recupererMaintenant()">
-         Les fonctions ne sont pas modifiées : seul le bouton qui les appelle change.
+
+       1) RELIER LES BOUTONS
+          Sur chacun des 15 contrôles annotés data-action="TODO", mettez votre
+          fonction existante. Exemple :
+              <button class="ists-btn ists-btn--primary" type="button"
+                      onclick="recupererMaintenant()">
+          Vos fonctions ne sont pas modifiées : seul le bouton qui les appelle change.
+
+       2) REMPLACER LES DONNÉES DE DÉMONSTRATION
+          Les chiffres et les noms présents ici sont FICTIFS. Les cinq zones
+          concernées portent l'attribut data-donnee-exemple, qui décrit ce
+          qu'elles contiennent :
+              · l'horodatage de la dernière vérification   (page-head__meta)
+              · le bandeau : nombre de champs, horodatage, n° de rapport
+              · les quatre indicateurs clés
+              · les lignes du tableau (étudiants, matricules, champs, dates)
+              · l'état de la base et l'activité récente
+          Remplissez-les depuis vos données réelles, puis retirez l'attribut.
+
+          L'audit les signale tant qu'ils sont présents :
+              · 15 avertissements « Annotation TODO »     (contrôles à relier)
+              ·  5 avertissements « Donnée de démonstration » (à remplacer)
        · Ajoutez <meta name="viewport" content="width=device-width, initial-scale=1">
          dans votre <head> : sans elle, l'écran reste tronqué sur téléphone.
        · Ajoutez lang="fr" sur votre balise <html>.
@@ -562,7 +579,7 @@
       <h1>Vue d'ensemble</h1>
       <p class="ists-page-head__sub">Bienvenue, Rectorat. Voici l'état de la base ce jour.</p>
     </div>
-    <p class="ists-page-head__meta">
+    <p class="ists-page-head__meta" data-donnee-exemple="horodatage de la dernière vérification">
       <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-clock"></use></svg>
       Dernière vérification : 1<sup>er</sup> octobre 2026, 23 h 27
     </p>
@@ -570,7 +587,7 @@
 
   <!-- Intégrité des données -->
   <section aria-labelledby="alert-title">
-    <div class="ists-alert" role="status">
+    <div class="ists-alert" role="status" data-donnee-exemple="nombre de champs détectés, horodatage et identifiant du rapport">
       <span class="ists-alert__icon"><svg class="ists-icon ists-icon--lg" aria-hidden="true"><use href="#ists-i-alert"></use></svg></span>
       <div class="ists-alert__body">
         <h2 class="ists-alert__title" id="alert-title">25 champs de dossier à compléter</h2>
@@ -612,7 +629,7 @@
   </section>
 
   <!-- Indicateurs clés -->
-  <section class="ists-stats" aria-label="Indicateurs clés">
+  <section class="ists-stats" aria-label="Indicateurs clés" data-donnee-exemple="les quatre indicateurs et leurs libellés">
     <article class="ists-stat ists-stat--warn">
       <div class="ists-stat__top">
         <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-alert"></use></svg>
@@ -718,7 +735,7 @@
           <a class="ists-section__link" href="#" data-action="TODO">Voir les 25 champs <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-arrow"></use></svg></a>
         </div>
 
-        <div class="ists-card">
+        <div class="ists-card" data-donnee-exemple="lignes du tableau : étudiant, matricule, champ, date de sauvegarde">
           <div class="ists-tablewrap">
             <table class="ists-table">
               <caption class="ists-sr-only">Champs manquants par étudiant, avec leur origine</caption>
@@ -779,7 +796,7 @@
     </div>
 
     <!-- Colonne latérale -->
-    <aside class="ists-aside">
+    <aside class="ists-aside" data-donnee-exemple="état de la base et activité récente">
       <div class="ists-card">
         <div class="ists-card__head">
           <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-database"></use></svg>

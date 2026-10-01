@@ -121,6 +121,12 @@ const REGLES = [
     conseil: 'Ne garder qu’un seul point d’entrée par action : une même opération proposée à deux endroits sème le doute.',
   },
   {
+    id: 'donnee-exemple',
+    gravite: 'avertissement',
+    titre: 'Donnée de démonstration dans l’interface',
+    conseil: 'Remplacer par vos données réelles puis retirer l’attribut data-donnee-exemple.',
+  },
+  {
     id: 'todo-restant',
     gravite: 'avertissement',
     titre: 'Annotation TODO laissée dans l’interface',
@@ -284,13 +290,23 @@ function analyserActionsDupliquees(src, res) {
 
 /**
  * Repère les annotations laissées par le générateur de bloc : elles indiquent
- * les contrôles qui attendent encore d'être reliés à une fonction existante.
+ * les contrôles qui attendent encore d'être reliés à une fonction existante,
+ * et les zones qui contiennent encore des données de démonstration.
  */
 function analyserAnnotationsTodo(src, res) {
+  const regleTodo = REGLES.find((r) => r.id === 'todo-restant');
+
   for (const m of src.matchAll(/data-action\s*=\s*["']TODO["']/gi)) {
     const libelle = (src.slice(m.index).match(/>([^<]{3,60})</) || [])[1] || '';
-    signaler(res, REGLES.find((r) => r.id === 'todo-restant'), src, m.index,
+    signaler(res, regleTodo, src, m.index,
       `contrôle à relier${libelle ? ` : « ${libelle.trim()} »` : ''}`);
+  }
+
+  // Zones marquées comme données de démonstration : elles doivent disparaître
+  // avant la mise en production, sous peine d'afficher des dossiers fictifs.
+  for (const m of src.matchAll(/data-donnee-exemple\s*=\s*["']([^"']*)["']/gi)) {
+    signaler(res, REGLES.find((r) => r.id === 'donnee-exemple'), src, m.index,
+      m[1] ? `à remplacer : ${m[1]}` : 'zone de données de démonstration');
   }
 }
 

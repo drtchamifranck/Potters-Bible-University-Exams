@@ -119,11 +119,28 @@ ENTETE = """<!-- ===============================================================
          .ists-v9 : aucun risque de conflit avec votre propre feuille.
 
      À FAIRE APRÈS LE COLLAGE
-       · Sur chaque bouton d'action, remplacez l'annotation TODO par votre
-         fonction existante. Exemple :
-             <button class="ists-btn ists-btn--primary" type="button"
-                     onclick="recupererMaintenant()">
-         Les fonctions ne sont pas modifiées : seul le bouton qui les appelle change.
+
+       1) RELIER LES BOUTONS
+          Sur chacun des 15 contrôles annotés data-action="TODO", mettez votre
+          fonction existante. Exemple :
+              <button class="ists-btn ists-btn--primary" type="button"
+                      onclick="recupererMaintenant()">
+          Vos fonctions ne sont pas modifiées : seul le bouton qui les appelle change.
+
+       2) REMPLACER LES DONNÉES DE DÉMONSTRATION
+          Les chiffres et les noms présents ici sont FICTIFS. Les cinq zones
+          concernées portent l'attribut data-donnee-exemple, qui décrit ce
+          qu'elles contiennent :
+              · l'horodatage de la dernière vérification   (page-head__meta)
+              · le bandeau : nombre de champs, horodatage, n° de rapport
+              · les quatre indicateurs clés
+              · les lignes du tableau (étudiants, matricules, champs, dates)
+              · l'état de la base et l'activité récente
+          Remplissez-les depuis vos données réelles, puis retirez l'attribut.
+
+          L'audit les signale tant qu'ils sont présents :
+              · 15 avertissements « Annotation TODO »     (contrôles à relier)
+              ·  5 avertissements « Donnée de démonstration » (à remplacer)
        · Ajoutez <meta name="viewport" content="width=device-width, initial-scale=1">
          dans votre <head> : sans elle, l'écran reste tronqué sur téléphone.
        · Ajoutez lang="fr" sur votre balise <html>.

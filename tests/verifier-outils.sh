@@ -128,6 +128,15 @@ verifier_vrai "tous les jetons sont préfixés --ists-" \
 verifier_vrai "chaque sélecteur est porté par .ists-v9" \
               bash -c "! grep -E '^[^@/*[:space:]].*\{' design/ists-design-system.scope.css | grep -qv 'ists-v9'"
 
+verifier "les 5 zones de démonstration sont balisées dans la maquette" \
+         "5" "$(grep -c 'data-donnee-exemple' "$MAQUETTE")"
+verifier "la règle donnee-exemple est active sur le bloc" \
+         "5" "$(node tools/audit-ui.mjs docs/bloc-vue-ensemble.html --json | node -e '
+                  let d = ""; process.stdin.on("data", (c) => d += c).on("end", () => {
+                    const r = JSON.parse(d)[0].resultats.filter((x) => x.regle === "donnee-exemple");
+                    process.stdout.write(String(r.length));
+                  });')"
+
 echo
 echo "7. Bloc prêt à coller (documentation)"
 if python3 tests/verifier-bloc.py > "$TRAVAIL/bloc.log" 2>&1; then

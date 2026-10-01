@@ -491,7 +491,7 @@ table.table{width:100%; border-collapse:collapse; font-size:13.5px}
       <h1>Vue d'ensemble</h1>
       <p class="page-head__sub">Bienvenue, Rectorat. Voici l'état de la base ce jour.</p>
     </div>
-    <p class="page-head__meta">
+    <p class="page-head__meta" data-donnee-exemple="horodatage de la dernière vérification">
       <svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"></use></svg>
       Dernière vérification : 1<sup>er</sup> octobre 2026, 23 h 27
     </p>
@@ -499,7 +499,7 @@ table.table{width:100%; border-collapse:collapse; font-size:13.5px}
 
   <!-- Intégrité des données -->
   <section aria-labelledby="alert-title">
-    <div class="alert" role="status">
+    <div class="alert" role="status" data-donnee-exemple="nombre de champs détectés, horodatage et identifiant du rapport">
       <span class="alert__icon"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"></use></svg></span>
       <div class="alert__body">
         <h2 class="alert__title" id="alert-title">25 champs de dossier à compléter</h2>
@@ -541,7 +541,7 @@ table.table{width:100%; border-collapse:collapse; font-size:13.5px}
   </section>
 
   <!-- Indicateurs clés -->
-  <section class="stats" aria-label="Indicateurs clés">
+  <section class="stats" aria-label="Indicateurs clés" data-donnee-exemple="les quatre indicateurs et leurs libellés">
     <article class="stat stat--warn">
       <div class="stat__top">
         <svg class="icon icon--sm" aria-hidden="true"><use href="#i-alert"></use></svg>
@@ -647,7 +647,7 @@ table.table{width:100%; border-collapse:collapse; font-size:13.5px}
           <a class="section__link" href="#">Voir les 25 champs <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
         </div>
 
-        <div class="card">
+        <div class="card" data-donnee-exemple="lignes du tableau : étudiant, matricule, champ, date de sauvegarde">
           <div class="tablewrap">
             <table class="table">
               <caption class="sr-only">Champs manquants par étudiant, avec leur origine</caption>
@@ -708,7 +708,7 @@ table.table{width:100%; border-collapse:collapse; font-size:13.5px}
     </div>
 
     <!-- Colonne latérale -->
-    <aside class="aside">
+    <aside class="aside" data-donnee-exemple="état de la base et activité récente">
       <div class="card">
         <div class="card__head">
           <svg class="icon icon--sm" aria-hidden="true"><use href="#i-database"></use></svg>
