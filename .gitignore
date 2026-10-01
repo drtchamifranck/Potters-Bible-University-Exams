@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Sauvegardes créées par tools/integrer-refonte.py
+*.html.bak
+
+# Éditeurs
+.vscode/
+.idea/
+.DS_Store
