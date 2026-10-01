@@ -37,14 +37,17 @@ demandes du rectorat.
 │   ├── ists-design-system.css           # Design system extrait (généré)
 │   └── ists-design-system.scope.css     # Version portée par .ists-v9 (généré)
 ├── docs/
-│   └── integration-v8.md                # Procédure d'intégration à l'application V8
+│   ├── integration-v8.md                # Procédure d'intégration à l'application V8
+│   └── bloc-vue-ensemble.html           # Section prête à coller (générée)
 ├── tools/
 │   ├── audit-ui.mjs                     # Audit qualité d'interface (sans dépendance)
 │   ├── extraire-design-system.py        # Génère les deux feuilles CSS
-│   └── integrer-refonte.py              # Intègre la refonte dans un fichier existant
+│   ├── integrer-refonte.py              # Intègre la refonte dans un fichier existant
+│   └── generer-bloc.py                  # Génère la section prête à coller
 ├── tests/
 │   ├── fixtures/avant-v8.html           # Banc d'essai reproduisant l'écran avant refonte
-│   └── verifier-outils.sh               # 21 contrôles automatiques
+│   ├── verifier-outils.sh               # 24 contrôles automatiques
+│   └── verifier-bloc.py                 # Contrôles du bloc prêt à coller
 └── README.md
 ```
 
@@ -67,9 +70,13 @@ python3 -m http.server 8000 --directory design
 Contrôle automatique d'un écran avant intégration : emojis utilisés comme
 icônes, libellés tronqués, largeurs fixes qui débordent, contour de focus
 supprimé, bouton-icône sans nom accessible, image sans `alt`, `viewport` ou
-`lang` manquants, hiérarchie de titres discontinue, et **action proposée deux
+`lang` manquants, hiérarchie de titres discontinue, **action proposée deux
 fois** — y compris lorsque les libellés diffèrent (« Récupérer TOUT » d'un
-côté, « Récupération complète » de l'autre).
+côté, « Récupération complète » de l'autre) — et **contrôle resté à relier**
+(`data-action="TODO"`).
+
+Sur un extrait de page (fragment), les contrôles propres au document entier
+(`viewport`, `lang`) sont automatiquement désactivés.
 
 ```bash
 node tools/audit-ui.mjs design/index.html        # rapport lisible
@@ -103,6 +110,18 @@ python3 tools/integrer-refonte.py app.html --appliquer  # écriture + sauvegarde
 Remplace les emojis-icônes par des icônes SVG, injecte la bibliothèque
 d'icônes et le design system porté. Ne touche ni au JavaScript, ni aux `id`,
 ni aux `onclick`. Opération idempotente et réversible.
+
+### Section prête à coller
+
+```bash
+python3 tools/generer-bloc.py
+```
+
+Produit `docs/bloc-vue-ensemble.html` : la section « Vue d'ensemble » complète
+(style, icônes et structure) à coller directement dans l'application, sans
+outil ni ligne de commande. Le bloc est autonome et isolé — classes préfixées
+`ists-`, style porté par `.ists-v9` — et les contrôles à relier sont annotés
+`data-action="TODO"`, annotation que l'audit signale.
 
 Procédure détaillée : **[docs/integration-v8.md](docs/integration-v8.md)**.
 

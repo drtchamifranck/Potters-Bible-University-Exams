@@ -121,6 +121,12 @@ const REGLES = [
     conseil: 'Ne garder qu’un seul point d’entrée par action : une même opération proposée à deux endroits sème le doute.',
   },
   {
+    id: 'todo-restant',
+    gravite: 'avertissement',
+    titre: 'Annotation TODO laissée dans l’interface',
+    conseil: 'Relier le contrôle à la fonction existante de l’application puis retirer data-action="TODO".',
+  },
+  {
     id: 'symbole-texte',
     gravite: 'avertissement',
     titre: 'Symbole typographique employé comme icône',
@@ -199,7 +205,8 @@ function analyserStyles(src, res) {
   }
 }
 
-function analyserBalises(src, res) {
+function analyserBalises(src, res, options = {}) {
+  const fragment = options.fragment ?? false;
   // Boutons-icône : <button …> ne contenant qu'un <svg>/<img>/<i> et pas d'aria-label
   for (const m of src.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/gi)) {
     const attrs = m[1];
@@ -212,11 +219,14 @@ function analyserBalises(src, res) {
   for (const m of src.matchAll(/<img\b([^>]*)>/gi)) {
     if (!/\balt\s*=/i.test(m[1])) signaler(res, REGLES[5], src, m.index, m[0]);
   }
-  if (!/<meta[^>]+name=["']viewport["']/i.test(src)) {
-    signaler(res, REGLES[6], src, 0, '<head> : meta viewport manquante');
-  }
-  if (!/<html[^>]*\blang=/i.test(src)) {
-    signaler(res, REGLES[7], src, 0, '<html> : attribut lang manquant');
+  // Ces deux contrôles visent le document entier : sans objet sur un fragment.
+  if (!fragment) {
+    if (!/<meta[^>]+name=["']viewport["']/i.test(src)) {
+      signaler(res, REGLES[6], src, 0, '<head> : meta viewport manquante');
+    }
+    if (!/<html[^>]*\blang=/i.test(src)) {
+      signaler(res, REGLES[7], src, 0, '<html> : attribut lang manquant');
+    }
   }
   for (const m of src.matchAll(/style\s*=\s*["'][^"']*color\s*:/gi)) {
     signaler(res, REGLES[8], src, m.index, m[0]);
@@ -272,6 +282,18 @@ function analyserActionsDupliquees(src, res) {
   }
 }
 
+/**
+ * Repère les annotations laissées par le générateur de bloc : elles indiquent
+ * les contrôles qui attendent encore d'être reliés à une fonction existante.
+ */
+function analyserAnnotationsTodo(src, res) {
+  for (const m of src.matchAll(/data-action\s*=\s*["']TODO["']/gi)) {
+    const libelle = (src.slice(m.index).match(/>([^<]{3,60})</) || [])[1] || '';
+    signaler(res, REGLES.find((r) => r.id === 'todo-restant'), src, m.index,
+      `contrôle à relier${libelle ? ` : « ${libelle.trim()} »` : ''}`);
+  }
+}
+
 /** Vérifie la continuité de la hiérarchie des titres (h1 → h2 → h3). */
 function analyserTitres(src, res) {
   const niveaux = [...src.matchAll(/<h([1-6])\b/gi)].map((m) => Number(m[1]));
@@ -299,15 +321,17 @@ export function auditer(chemin) {
   const brut = readFileSync(chemin, 'utf8');
   const src = sansCommentaires(brut);
   const res = [];
+  const fragment = !/<html\b/i.test(src);   // extrait de page (bloc à coller)
 
   analyserEmojis(src, brut, res);
   analyserStyles(src, res);
-  analyserBalises(src, res);
+  analyserBalises(src, res, { fragment });
   analyserActionsDupliquees(src, res);
+  analyserAnnotationsTodo(src, res);
   analyserTitres(src, res);
 
   res.sort((a, b) => a.ligne - b.ligne || a.colonne - b.colonne);
-  return { fichier: chemin, resultats: res };
+  return { fichier: chemin, fragment, resultats: res };
 }
 
 /* ---------------------------------------------------------------------- CLI */

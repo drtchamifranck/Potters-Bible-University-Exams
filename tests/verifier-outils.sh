@@ -129,6 +129,14 @@ verifier_vrai "chaque sélecteur est porté par .ists-v9" \
               bash -c "! grep -E '^[^@/*[:space:]].*\{' design/ists-design-system.scope.css | grep -qv 'ists-v9'"
 
 echo
+echo "7. Bloc prêt à coller (documentation)"
+if python3 tests/verifier-bloc.py > "$TRAVAIL/bloc.log" 2>&1; then
+  ok "bloc autonome, isolé et conforme ($(grep -c '  OK' "$TRAVAIL/bloc.log") contrôles)"
+else
+  echec "bloc non conforme — voir : python3 tests/verifier-bloc.py"
+fi
+
+echo
 echo "─────────────────────────────────────────────"
 if [ "$echecs" -eq 0 ]; then
   printf ' %s : %d/%d contrôles réussis\n\n' "${VERT}SUCCÈS${RAZ}" "$controles" "$controles"

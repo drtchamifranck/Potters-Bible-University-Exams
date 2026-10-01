@@ -20,13 +20,60 @@ L'intégration est conçue pour être réversible et sans effet de bord :
 | Aucun conflit de noms | Icônes et variables préfixées `ists-`. |
 | Aucun doublon | L'injection est **idempotente** : un second passage n'ajoute rien. |
 | Votre logique est préservée | Aucun `id`, `class`, `onclick` ni bloc `<script>` n'est modifié. |
-| Vérifiable | `bash tests/verifier-outils.sh` exécute 21 contrôles automatiques. |
+| Vérifiable | `bash tests/verifier-outils.sh` exécute 24 contrôles automatiques. |
 
 ---
 
-## 2. Mode opératoire
+## 2. Deux voies possibles
 
-### Étape 1 — État des lieux
+| Voie | Pour qui | Effort |
+| --- | --- | --- |
+| **A. Copier-coller** (recommandée) | Vous, sans outil ni ligne de commande | Coller un bloc dans votre fichier |
+| **B. Outil automatique** | Intégration scriptée, reproductible | Trois commandes |
+
+Les deux produisent le même écran et utilisent les mêmes identifiants : elles
+ne peuvent pas se dupliquer si vous passez de l'une à l'autre.
+
+### Voie A — coller le bloc
+
+Le fichier **[bloc-vue-ensemble.html](bloc-vue-ensemble.html)** contient la
+section complète : programme de style, vingt et une icônes SVG et structure.
+
+1. Ouvrez votre fichier `ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8…html`.
+2. Repérez votre section « Vue d'ensemble » et remplacez-la par tout le contenu
+   de `bloc-vue-ensemble.html`, du `<section>` initial jusqu'à `</section>`.
+3. Sur chaque bouton annoté `data-action="TODO"`, branchez votre fonction :
+
+   ```html
+   <button class="ists-btn ists-btn--primary" type="button"
+           onclick="recupererMaintenant()">
+   ```
+
+4. Ajoutez dans votre `<head>` :
+
+   ```html
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   ```
+
+   et `lang="fr"` sur votre balise `<html>`.
+
+5. Vérifiez : `node tools/audit-ui.mjs votre-fichier.html` — il vous reste à
+   relier les 15 contrôles signalés sous la règle `todo-restant`.
+
+Le bloc est **isolé** : toutes ses classes portent le préfixe `ists-`, et son
+style est porté par `.ists-v9`. Même si votre feuille de style définit déjà
+`.btn`, `.card` ou `.stat__value`, aucun échange de styles n'est possible —
+c'est vérifié automatiquement par `tests/verifier-bloc.py`.
+
+Pour le régénérer après une modification de la maquette :
+
+```bash
+python3 tools/generer-bloc.py
+```
+
+### Voie B — outil automatique
+
+#### Étape 1 — État des lieux
 
 ```bash
 node tools/audit-ui.mjs "ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8-corrige.html"
@@ -36,7 +83,7 @@ L'audit liste, ligne par ligne, les défauts de finition : emojis-icônes,
 libellés tronqués, largeurs fixes, focus clavier supprimé, `viewport` ou `lang`
 manquants. Code de sortie `1` si des erreurs subsistent.
 
-### Étape 2 — Simulation
+#### Étape 2 — Simulation
 
 ```bash
 python3 tools/integrer-refonte.py "ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8-corrige.html"
@@ -45,7 +92,7 @@ python3 tools/integrer-refonte.py "ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8-corrige.htm
 Affiche ce qui **serait** fait : emojis remplacés, blocs injectés, emojis non
 reconnus à traiter à la main. Aucun fichier n'est écrit.
 
-### Étape 3 — Application
+#### Étape 3 — Application
 
 ```bash
 python3 tools/integrer-refonte.py "ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8-corrige.html" --appliquer
@@ -59,7 +106,7 @@ Trois transformations mécaniques :
 
 Une sauvegarde `…html.bak` est créée.
 
-### Étape 4 — Activer la refonte sur l'écran
+#### Étape 4 — Activer la refonte sur l'écran
 
 Ajoutez la classe `ists-v9` sur le conteneur de l'écran Vue d'ensemble :
 
@@ -72,7 +119,7 @@ Ajoutez la classe `ists-v9` sur le conteneur de l'écran Vue d'ensemble :
 Tant que cette classe est absente, **rien ne change** visuellement : le CSS
 injecté reste inactif. C'est le point de bascule, et il est réversible.
 
-### Étape 5 — Remplacer le contenu de la section
+#### Étape 5 — Remplacer le contenu de la section
 
 Reprenez la structure de `design/index.html` (bandeau d'intégrité, indicateurs
 clés, actions rapides, tableau des champs à compléter) en rebranchant vos
@@ -94,7 +141,7 @@ devient **« Tout récupérer »**, et les majuscules criardes disparaissent.
 > Le bandeau `<div class="band" id="demo-band">` en tête de la maquette est un
 > repère de maquette : **supprimez-le** lors de l'intégration.
 
-### Étape 6 — Vérification
+#### Étape 6 — Vérification
 
 ```bash
 node tools/audit-ui.mjs "ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8-corrige.html"
@@ -103,7 +150,7 @@ bash tests/verifier-outils.sh
 
 Objectif : plus aucune erreur d'audit, et 21/21 contrôles réussis.
 
-### Retour arrière
+#### Retour arrière
 
 ```bash
 mv "ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8-corrige.html.bak" \

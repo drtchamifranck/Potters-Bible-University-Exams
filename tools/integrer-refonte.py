@@ -159,18 +159,22 @@ def construire_sprite() -> str:
 
 
 def construire_feuille_icones() -> str:
-    """Rejoue les règles `.icon` du design system sous le préfixe `ists-icon`.
+    """Rejoue les règles `.icon` de la maquette sous le préfixe `ists-icon`.
 
-    Ces règles restent globales : une icône injectée doit être dimensionnée
-    même si elle se trouve en dehors de la portée `.ists-v9`.
+    Ces règles restent **globales** : une icône injectée doit être dimensionnée
+    même lorsqu'elle se trouve en dehors de la portée `.ists-v9` (c'est le cas
+    des emojis remplacés dans le reste de l'application).
     """
-    css = CSS_SCOPE.read_text(encoding="utf-8") if CSS_SCOPE.exists() else ""
+    maquette = MAQUETTE.read_text(encoding="utf-8")
+    blocs = re.findall(r"<style[^>]*>(.*?)</style>", maquette, flags=re.S)
+    css = "\n".join(blocs)
     regles = []
     for selecteur, corps in re.findall(r"([^{}]+)\{([^{}]*)\}", css):
         sel = selecteur.strip().splitlines()[-1].strip() if selecteur.strip() else ""
-        if re.fullmatch(r"\.icon(?:--sm|--lg)?", sel):
+        if re.fullmatch(r"\.icon(?:--sm|--lg)?|\.sprite", sel):
             regles.append(f".{PREFIXE}{sel[1:]} {{{corps.strip()}}}")
-    regles.append(f".{PREFIXE}sprite {{ display: none; }}")
+    if not any("sprite" in r for r in regles):
+        regles.append(f".{PREFIXE}sprite {{ display: none; }}")
     return "\n".join(regles)
 
 
