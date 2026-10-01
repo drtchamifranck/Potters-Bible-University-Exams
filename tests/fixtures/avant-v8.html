@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--
+  BANC D'ESSAI — reproduction de l'écran « Vue d'ensemble » de l'application
+  ISTS Campus V8, tel qu'il apparaît avant refonte (d'après la capture d'écran
+  du 01/10/2026). Ce fichier sert uniquement à vérifier que les outils d'audit
+  et d'intégration détectent puis corrigent les défauts. Ce n'est PAS
+  l'application réelle.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<title>ISTS Campus — Accès cours rapide V8</title>
+<style>
+  /* Feuille de style d'origine, volontairement laissée telle quelle. */
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fbf7ee;margin:0;padding:16px}
+  h1{font-family:Georgia,serif;font-size:30px;margin:18px 0 6px;color:#17202e}
+  .sous-titre{color:#5c6b82;margin:0 0 18px}
+  .panneau-verif{background:#fdf8ec;border:1px solid #eadfc4;border-radius:10px;padding:14px;margin-bottom:18px;color:#5c6b82;font-size:14px}
+  .bouton{display:block;margin:8px auto;padding:12px 18px;border-radius:10px;border:1px solid #d8cfb8;
+          background:#fff;font-size:15px;cursor:pointer;text-align:center}
+  .bouton-or{background:#e2bd63;border-color:#cfa94e;font-weight:700}
+  .ligne-bouton{width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:8px auto}
+  .bouton-flottant{position:fixed;bottom:78px;right:18px;width:60px;height:60px;border-radius:50%;
+                   background:#e2bd63;border:0;font-size:24px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  a{color:#2563eb}
+  button:focus{outline:none}
+  .nav{display:flex;justify-content:space-around;border-top:1px solid #e6ddc8;padding-top:10px;margin-top:26px;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="panneau-verif">
+  🔍 Vérification automatique du 01/10/2026 14:35:27 : 18 champ(s) de dossier à
+  compléter ont été trouvés dans les sauvegardes Firestore sans être dans cette base.
+  <button class="bouton bouton-or" id="btn-recuperer" onclick="recupererMaintenant()">🩺 Récupérer maintenant</button>
+  <button class="bouton" id="btn-tout" onclick="recupererTout()">🔍 Récupérer TOUT (tout l'historique)</button>
+  <button class="bouton" style="width:180px">🩺 Voir le détail</button>
+  <button class="bouton" style="width:120px">Plus tard</button>
+</div>
+
+<h1>Vue d'ensemble</h1>
+<p class="sous-titre">Bienvenue, Rectorat ISTS.</p>
+
+<div class="ligne-bouton">
+  <button class="bouton" onclick="telechargerSauvegarde('complet')">💾 Télécharger une sauvegarde complète de la base</button>
+</div>
+<button class="bouton">📤 Récupérer les étudiants et leurs données associées</button>
+<button class="bouton bouton-or">🔍 Récupérer TOUT (recherche complète)</button>
+<div class="ligne-bouton">
+  <button class="bouton">🩺 Auditer les dossiers incomplets</button>
+</div>
+<button class="bouton">📤 Importer une sauvegarde externe</button>
+<button class="bouton bouton-or">🔔 Vérifier les nouvelles demandes</button>
+
+<button class="bouton-flottant" title="Accès cours rapide">🎓</button>
+
+<div class="nav">🏛️ Accueil · 👥 Étudiants · 🗂️ Dossiers · 💾 Sauvegardes</div>
+
+<script>
+  // Code applicatif : l'intégration de la refonte ne doit jamais le modifier.
+  const ETAT = { dossiers: [], sauvegardes: [] };
+
+  function recupererMaintenant() {
+    console.log("Récupération des 18 champs manquants…");
+    fetch("/api/recuperer", { method: "POST", body: JSON.stringify({ champs: 18 }) });
+  }
+
+  function recupererTout() {
+    console.log("Récupération complète de l'historique");
+    document.getElementById("btn-tout").disabled = true;
+  }
+
+  function telechargerSauvegarde(portee) {
+    window.location.href = `/api/sauvegarde?portee=${encodeURIComponent(portee)}`;
+  }
+</script>
+
+</body>
+</html>

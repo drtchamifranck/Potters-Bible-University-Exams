@@ -20,8 +20,9 @@ import { pathToFileURL } from 'node:url';
 
 /* ------------------------------------------------------------------ règles */
 
-// Pictogrammes Unicode (couvre 🔍 📥 🩺 📤 🔔 🏛️ ✅ ❌ ⚠️ …) + sélecteurs de variante
-const RE_EMOJI = /\p{Extended_Pictographic}|\uFE0F|\u200D/gu;
+// Pictogrammes Unicode (🔍 📥 🩺 📤 🔔 …), séquence complète groupée :
+// un pictogramme suivi de ses sélecteurs de variante et liaisons ZWJ (🏛️ = 🏛 + U+FE0F).
+const RE_EMOJI = /\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic}\uFE0F?)*/gu;
 // Symboles typographiques souvent détournés en icônes : tolérés mais signalés
 const RE_SYMBOLE = /[✓✔✗✘★☆⇒➜➔⬅➡⬆⬇]/gu;
 

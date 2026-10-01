@@ -32,11 +32,18 @@ demandes du rectorat.
 ```
 .
 ├── design/
-│   ├── index.html              # Maquette de l'écran « Vue d'ensemble » (autonome)
-│   └── ists-design-system.css  # Design system extrait, prêt à intégrer
+│   ├── index.html                       # Maquette de l'écran « Vue d'ensemble » (autonome)
+│   ├── ists-design-system.css           # Design system extrait (généré)
+│   └── ists-design-system.scope.css     # Version portée par .ists-v9 (généré)
+├── docs/
+│   └── integration-v8.md                # Procédure d'intégration à l'application V8
 ├── tools/
-│   ├── audit-ui.mjs            # Audit qualité d'interface (sans dépendance)
-│   └── extraire-design-system.py
+│   ├── audit-ui.mjs                     # Audit qualité d'interface (sans dépendance)
+│   ├── extraire-design-system.py        # Génère les deux feuilles CSS
+│   └── integrer-refonte.py              # Intègre la refonte dans un fichier existant
+├── tests/
+│   ├── fixtures/avant-v8.html           # Banc d'essai reproduisant l'écran avant refonte
+│   └── verifier-outils.sh               # 21 contrôles automatiques
 └── README.md
 ```
 
@@ -75,8 +82,36 @@ peut donc servir de garde-fou dans une chaîne d'intégration continue.
 python3 tools/extraire-design-system.py
 ```
 
-Régénère `design/ists-design-system.css` à partir de la maquette, afin qu'il
-n'existe qu'une seule source de vérité.
+Régénère les deux feuilles CSS à partir de la maquette, afin qu'il n'existe
+qu'une seule source de vérité :
+
+- `ists-design-system.css` — version brute, telle qu'utilisée par la maquette ;
+- `ists-design-system.scope.css` — version **portée** : sélecteurs préfixés par
+  `.ists-v9`, jetons renommés `--ists-…`. Elle est sans effet en dehors du
+  conteneur `ists-v9`, donc inoffensive dans une application existante.
+
+### Intégration dans une application existante
+
+```bash
+python3 tools/integrer-refonte.py app.html              # simulation (n'écrit rien)
+python3 tools/integrer-refonte.py app.html --appliquer  # écriture + sauvegarde .bak
+```
+
+Remplace les emojis-icônes par des icônes SVG, injecte la bibliothèque
+d'icônes et le design system porté. Ne touche ni au JavaScript, ni aux `id`,
+ni aux `onclick`. Opération idempotente et réversible.
+
+Procédure détaillée : **[docs/integration-v8.md](docs/integration-v8.md)**.
+
+### Contrôles automatiques
+
+```bash
+bash tests/verifier-outils.sh
+```
+
+Vérifie la chaîne complète sur un banc d'essai (`tests/fixtures/avant-v8.html`)
+qui reproduit l'écran avant refonte : détection des défauts, intégration,
+préservation du code applicatif, idempotence, cloisonnement du CSS.
 
 ## Conventions de code
 
