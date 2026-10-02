@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="ISTS Campus — tableau de bord du rectorat : intégrité des dossiers, sauvegardes et demandes.">
+<title>Vue d'ensemble · ISTS Campus</title>
+<style>
+/* ==========================================================================
+   ISTS Campus — Design system
+   Refonte professionnelle : icônes SVG (plus d'emojis), hiérarchie visuelle,
+   responsive mobile-first, thème clair/sombre, focus clavier visible.
+   ========================================================================== */
+
+/* --- Jetons de design ---------------------------------------------------- */
+:root{
+  /* Surfaces & texte */
+  --bg:#f4f6f9;
+  --surface:#ffffff;
+  --surface-2:#f8fafc;
+  --surface-3:#eef2f7;
+  --border:#dde3ec;
+  --border-strong:#c6cfdd;
+  --text:#0f1a2b;
+  --text-2:#3f4d63;
+  --muted:#6b7a92;
+
+  /* Marque & états */
+  --brand:#1b3f77;
+  --brand-600:#24518f;
+  --brand-050:#eaf0fa;
+  --accent:#2563eb;
+  --warn:#9a5b00;
+  --warn-bg:#fdf5e6;
+  --warn-border:#f0dcb4;
+  --ok:#0f6b52;
+  --ok-bg:#e8f5f0;
+  --danger:#a32626;
+  --danger-bg:#fdeced;
+
+  /* Typographie */
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+
+  /* Rythme */
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-full:999px;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
+  --shadow-sm:0 1px 2px rgba(15,26,43,.06),0 1px 3px rgba(15,26,43,.05);
+  --shadow-md:0 4px 12px rgba(15,26,43,.08),0 1px 3px rgba(15,26,43,.05);
+  --ring:0 0 0 3px rgba(37,99,235,.32);
+  --header-h:60px;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b1220; --surface:#111a2b; --surface-2:#151f33; --surface-3:#1b273e;
+    --border:#26334b; --border-strong:#35455f;
+    --text:#eaf0f8; --text-2:#c2cddc; --muted:#93a2b8;
+    --brand:#9dc0ff; --brand-600:#b9d2ff; --brand-050:#1a2740;
+    --accent:#6ea8fe;
+    --warn:#f0c07a; --warn-bg:#2c2413; --warn-border:#4a3a1c;
+    --ok:#7fd8bd; --ok-bg:#122b25;
+    --danger:#f4a1a4; --danger-bg:#2e1518;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 4px 14px rgba(0,0,0,.45);
+  }
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:var(--font); font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden; /* aucune barre horizontale, même sur petits écrans */
+}
+h1,h2,h3,p{margin:0}
+button{font:inherit; color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:none; box-shadow:var(--ring); border-radius:6px}
+
+/* Icônes SVG inline (remplacent les emojis) */
+.icon{width:20px; height:20px; flex:0 0 auto; stroke:currentColor; fill:none;
+      stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+.icon--sm{width:16px; height:16px}
+.icon--lg{width:24px; height:24px}
+.sprite{display:none}
+
+.skip-link{position:absolute; left:-9999px; top:0; z-index:100; background:var(--surface);
+  padding:10px 16px; border-radius:0 0 var(--r-sm) 0; text-decoration:none}
+.skip-link:focus{left:0}
+/* Contenu réservé aux lecteurs d'écran */
+.sr-only{
+  position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* --- Barre d'application ------------------------------------------------- */
+.appbar{
+  position:sticky; top:0; z-index:40; background:var(--surface);
+  border-bottom:1px solid var(--border); box-shadow:var(--shadow-sm);
+  padding-top:env(safe-area-inset-top);
+}
+.appbar__inner{
+  max-width:1240px; margin:0 auto; min-height:var(--header-h);
+  padding:0 var(--sp-4); display:flex; align-items:center; gap:var(--sp-4);
+}
+.brand{display:flex; align-items:center; gap:10px; min-width:0; text-decoration:none; color:inherit}
+.brand__mark{
+  width:34px; height:34px; flex:0 0 auto; border-radius:9px;
+  background:var(--brand); color:#fff; display:grid; place-items:center;
+}
+@media (prefers-color-scheme: dark){ .brand__mark{background:var(--brand-600); color:#0b1220} }
+.brand__mark .icon{width:19px; height:19px; stroke-width:1.9}
+.brand__text{min-width:0}
+.brand__name{font-size:15px; font-weight:650; letter-spacing:-.01em; white-space:nowrap}
+.brand__sub{font-size:11.5px; color:var(--muted); white-space:nowrap}
+@media (max-width:399px){ .brand__sub{display:none} }
+
+/* Navigation principale — onglets sobres, soulignés à l'état actif */
+.mainnav{display:none; margin-left:var(--sp-4)}
+.mainnav__list{display:flex; gap:2px; list-style:none; margin:0; padding:0}
+.mainnav__link{
+  display:block; padding:8px 12px; border-radius:var(--r-sm); text-decoration:none;
+  color:var(--text-2); font-size:14px; font-weight:520; white-space:nowrap;
+}
+.mainnav__link:hover{background:var(--surface-3); color:var(--text)}
+.mainnav__link[aria-current="page"]{background:var(--brand-050); color:var(--brand); font-weight:620}
+@media (prefers-color-scheme: dark){ .mainnav__link[aria-current="page"]{color:var(--accent)} }
+
+.appbar__actions{margin-left:auto; display:flex; align-items:center; gap:var(--sp-2)}
+.iconbtn{
+  position:relative; width:38px; height:38px; display:grid; place-items:center;
+  background:transparent; border:1px solid transparent; border-radius:10px; cursor:pointer; color:var(--text-2);
+}
+.iconbtn:hover{background:var(--surface-3); color:var(--text)}
+.iconbtn__badge{
+  position:absolute; top:4px; right:4px; min-width:17px; height:17px; padding:0 4px;
+  border-radius:var(--r-full); background:var(--danger); color:#fff;
+  font-size:10.5px; font-weight:700; line-height:17px; text-align:center; border:2px solid var(--surface);
+}
+.userchip{
+  display:none; align-items:center; gap:8px; padding:5px 10px 5px 5px;
+  border:1px solid var(--border); border-radius:var(--r-full); background:var(--surface); cursor:pointer;
+}
+.userchip:hover{border-color:var(--border-strong)}
+.userchip__avatar{
+  width:26px; height:26px; border-radius:50%; background:var(--brand-050); color:var(--brand);
+  display:grid; place-items:center; font-size:11px; font-weight:700;
+}
+@media (prefers-color-scheme: dark){ .userchip__avatar{color:var(--accent)} }
+.userchip__label{font-size:13px; font-weight:560; white-space:nowrap}
+
+/* --- Mise en page -------------------------------------------------------- */
+.page{
+  max-width:1240px; margin:0 auto; padding:var(--sp-5) var(--sp-4);
+  padding-bottom:calc(84px + env(safe-area-inset-bottom)); /* place pour la nav basse */
+}
+.band{
+  background:var(--brand-050); border:1px solid var(--border); border-radius:var(--r-md);
+  padding:10px var(--sp-4); margin-bottom:var(--sp-5);
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  font-size:13px; color:var(--text-2);
+}
+@media (prefers-color-scheme: dark){ .band{background:var(--surface-2)} }
+.band .icon{color:var(--brand)}
+@media (prefers-color-scheme: dark){ .band .icon{color:var(--accent)} }
+.band__tag{
+  font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-full);
+  padding:2px 8px; color:var(--text-2);
+}
+
+.page-head{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:var(--sp-4); flex-wrap:wrap; margin-bottom:var(--sp-5);
+}
+.page-head h1{font-size:26px; line-height:1.2; letter-spacing:-.02em; font-weight:680}
+.page-head__sub{color:var(--muted); font-size:14px; margin-top:4px}
+.page-head__meta{
+  display:flex; align-items:center; gap:6px; color:var(--muted); font-size:12.5px;
+  font-variant-numeric:tabular-nums;
+}
+.layout{display:grid; gap:var(--sp-5)}
+@media (min-width:1024px){
+  .layout{grid-template-columns:minmax(0,1fr) 320px; align-items:start}
+}
+
+/* --- Cartes & sections --------------------------------------------------- */
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+  box-shadow:var(--shadow-sm);
+}
+.card + .card{margin-top:var(--sp-5)}
+.card__head{
+  display:flex; align-items:center; gap:var(--sp-3);
+  padding:var(--sp-4) var(--sp-5); border-bottom:1px solid var(--border);
+}
+.card__title{font-size:15px; font-weight:640; letter-spacing:-.01em}
+.card__hint{font-size:12.5px; color:var(--muted)}
+.card__body{padding:var(--sp-5)}
+.section{margin-top:var(--sp-6)}
+.section__head{display:flex; align-items:baseline; justify-content:space-between; gap:var(--sp-4); margin-bottom:var(--sp-3)}
+.section__title{font-size:16px; font-weight:640; letter-spacing:-.01em}
+.section__link{font-size:13px; font-weight:560; text-decoration:none; display:inline-flex; align-items:center; gap:4px}
+
+/* --- Boutons ------------------------------------------------------------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  min-height:40px; padding:9px 16px; border-radius:10px; border:1px solid transparent;
+  font-size:14px; font-weight:580; cursor:pointer; text-decoration:none;
+  white-space:normal; text-align:center; /* le libellé se replie au lieu d'être tronqué */
+  transition:background-color .15s, border-color .15s, box-shadow .15s;
+}
+.btn .icon{width:18px; height:18px}
+.btn--primary{background:var(--brand); color:#fff; box-shadow:var(--shadow-sm)}
+.btn--primary:hover{background:var(--brand-600)}
+@media (prefers-color-scheme: dark){ .btn--primary{background:var(--accent); color:#0b1220} }
+.btn--secondary{background:var(--surface); color:var(--text); border-color:var(--border-strong)}
+.btn--secondary:hover{background:var(--surface-3)}
+.btn--ghost{background:transparent; color:var(--text-2)}
+.btn--ghost:hover{background:var(--surface-3); color:var(--text)}
+.btn--sm{min-height:34px; padding:6px 12px; font-size:13px; border-radius:9px}
+.btn--block{width:100%}
+.btn[disabled]{opacity:.5; cursor:not-allowed}
+
+/* --- Bandeau d'alerte intégrité ----------------------------------------- */
+.alert{
+  display:flex; gap:var(--sp-4); padding:var(--sp-4) var(--sp-5);
+  background:var(--warn-bg); border:1px solid var(--warn-border); border-radius:var(--r-lg);
+}
+.alert__icon{
+  width:38px; height:38px; flex:0 0 auto; border-radius:10px; display:grid; place-items:center;
+  background:rgba(154,91,0,.12); color:var(--warn);
+}
+.alert__body{min-width:0; flex:1 1 auto}
+.alert__title{font-size:15.5px; font-weight:660; letter-spacing:-.01em; color:var(--text)}
+.alert__text{font-size:13.5px; color:var(--text-2); margin-top:4px; max-width:70ch}
+.alert__actions{
+  display:flex; flex-wrap:wrap; gap:var(--sp-2); margin-top:var(--sp-4);
+}
+.alert__actions .btn{flex:0 1 auto}
+@media (max-width:560px){ .alert__actions .btn{flex:1 1 100%} }
+
+/* Repli « détails techniques » : le jargon n'occupe plus l'écran principal */
+.disclosure{margin-top:var(--sp-3); border-top:1px dashed var(--warn-border); padding-top:var(--sp-3)}
+.disclosure > summary{
+  cursor:pointer; font-size:12.5px; font-weight:580; color:var(--text-2);
+  display:inline-flex; align-items:center; gap:6px; list-style:none;
+}
+.disclosure > summary::-webkit-details-marker{display:none}
+.disclosure > summary .icon{transition:transform .18s}
+.disclosure[open] > summary .icon{transform:rotate(180deg)}
+.kv{
+  margin:var(--sp-3) 0 0; display:grid; gap:2px;
+  grid-template-columns:auto; font-size:12.5px;
+}
+@media (min-width:560px){ .kv{grid-template-columns:190px minmax(0,1fr)} }
+.kv dt{color:var(--muted); padding:3px 0}
+.kv dd{margin:0; padding:3px 0; font-family:var(--mono); font-size:12px; word-break:break-word}
+
+/* --- Statistiques -------------------------------------------------------- */
+.stats{display:grid; gap:var(--sp-3); grid-template-columns:repeat(2,minmax(0,1fr)); margin-top:var(--sp-5)}
+@media (min-width:900px){ .stats{grid-template-columns:repeat(4,minmax(0,1fr))} }
+.stat{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+  padding:var(--sp-4); box-shadow:var(--shadow-sm); min-width:0;
+}
+.stat__top{display:flex; align-items:center; gap:8px; color:var(--muted)}
+.stat__label{font-size:12.5px; font-weight:560; line-height:1.3}
+.stat__value{
+  font-size:28px; font-weight:680; letter-spacing:-.03em; margin-top:8px;
+  font-variant-numeric:tabular-nums; line-height:1.1;
+}
+.stat__foot{font-size:12px; margin-top:6px; color:var(--muted)}
+.stat--warn .stat__value{color:var(--warn)}
+.stat--warn .stat__top .icon{color:var(--warn)}
+.stat--ok .stat__value{color:var(--ok)}
+
+/* --- Actions rapides ----------------------------------------------------- */
+.actions{display:grid; gap:var(--sp-3); grid-template-columns:minmax(0,1fr); margin-top:var(--sp-3)}
+@media (min-width:640px){ .actions{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (min-width:1024px){ .actions{grid-template-columns:repeat(3,minmax(0,1fr))} }
+.action{
+  display:flex; gap:var(--sp-3); align-items:flex-start; width:100%; text-align:left;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md);
+  padding:var(--sp-4); cursor:pointer; box-shadow:var(--shadow-sm); min-width:0;
+}
+.action:hover{border-color:var(--border-strong); background:var(--surface-2)}
+.action__icon{
+  width:36px; height:36px; flex:0 0 auto; border-radius:9px; display:grid; place-items:center;
+  background:var(--brand-050); color:var(--brand); border:1px solid var(--border);
+}
+@media (prefers-color-scheme: dark){ .action__icon{color:var(--accent)} }
+.action__body{min-width:0}
+.action__label{font-size:14px; font-weight:600; letter-spacing:-.01em}
+.action__desc{font-size:12.5px; color:var(--muted); margin-top:3px}
+
+/* --- Tableau des dossiers (devient une liste de cartes sur mobile) -------- */
+.tablewrap{overflow-x:auto}
+table.table{width:100%; border-collapse:collapse; font-size:13.5px}
+.table th{
+  text-align:left; font-size:11.5px; font-weight:680; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--muted); padding:10px var(--sp-5); background:var(--surface-2);
+  border-bottom:1px solid var(--border); white-space:nowrap;
+}
+.table td{padding:13px var(--sp-5); border-bottom:1px solid var(--border); vertical-align:middle}
+.table tr:last-child td{border-bottom:0}
+.table tbody tr:hover{background:var(--surface-2)}
+.cell-name{font-weight:600}
+.cell-sub{font-size:12px; color:var(--muted); margin-top:2px}
+.mono{font-family:var(--mono); font-size:12.5px}
+.badge{
+  display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-full);
+  font-size:11.5px; font-weight:620; border:1px solid transparent; white-space:nowrap;
+}
+.badge--warn{background:var(--warn-bg); color:var(--warn); border-color:var(--warn-border)}
+.badge--ok{background:var(--ok-bg); color:var(--ok)}
+.badge--neutral{background:var(--surface-3); color:var(--text-2); border-color:var(--border)}
+.rowaction{
+  background:none; border:0; padding:4px 0; cursor:pointer; font-size:13px; font-weight:600;
+  color:var(--accent); display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
+}
+.table__empty{padding:var(--sp-6); text-align:center; color:var(--muted); font-size:13.5px}
+
+@media (max-width:767px){
+  .table thead{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+  .table, .table tbody, .table tr, .table td{display:block; width:100%}
+  .table tr{
+    border-bottom:1px solid var(--border); padding:var(--sp-3) var(--sp-4);
+    display:grid; grid-template-columns:1fr auto; gap:2px var(--sp-3);
+  }
+  .table td{border:0; padding:2px 0}
+  .table td[data-label]{display:flex; gap:8px; align-items:baseline; grid-column:1 / -1}
+  .table td[data-label]::before{
+    content:attr(data-label); flex:0 0 108px; color:var(--muted); font-size:12px;
+  }
+  .table td.is-primary{grid-column:1 / -1; font-weight:600}
+  .table td.is-primary::before{display:none}
+  .table td[data-label="Action"]{grid-column:1 / -1; padding-top:8px}
+  .table td[data-label="Action"]::before{display:none}
+}
+
+/* --- Colonne latérale ---------------------------------------------------- */
+.aside .card__body{padding:var(--sp-5)}
+.meter + .meter{margin-top:var(--sp-4)}
+.meter__row{display:flex; justify-content:space-between; gap:var(--sp-3); font-size:13px; margin-bottom:6px}
+.meter__label{color:var(--text-2); font-weight:540}
+.meter__value{color:var(--muted); font-variant-numeric:tabular-nums; font-weight:600}
+.meter__track{height:7px; border-radius:var(--r-full); background:var(--surface-3); overflow:hidden}
+.meter__fill{height:100%; border-radius:inherit; background:var(--brand)}
+@media (prefers-color-scheme: dark){ .meter__fill{background:var(--accent)} }
+.meter__fill--ok{background:var(--ok)}
+.meter__fill--warn{background:var(--warn)}
+
+.timeline{list-style:none; margin:0; padding:0}
+.timeline li{display:flex; gap:var(--sp-3); padding:var(--sp-3) 0; border-bottom:1px solid var(--border)}
+.timeline li:last-child{border-bottom:0; padding-bottom:0}
+.timeline__dot{
+  width:28px; height:28px; flex:0 0 auto; border-radius:50%; display:grid; place-items:center;
+  background:var(--surface-3); color:var(--text-2);
+}
+.timeline__text{font-size:13px; line-height:1.45; min-width:0}
+.timeline__time{font-size:11.5px; color:var(--muted); margin-top:2px; font-variant-numeric:tabular-nums}
+
+/* --- Navigation basse (mobile) ------------------------------------------ */
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
+  background:var(--surface); /* repli pour navigateurs anciens */
+  background:color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.tabbar__list{display:flex; list-style:none; margin:0; padding:6px 4px; max-width:600px; margin-inline:auto}
+.tabbar__item{flex:1 1 0; min-width:0}
+.tabbar__link{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 2px; border-radius:10px; text-decoration:none; color:var(--muted); font-size:10.5px; font-weight:560;
+}
+.tabbar__link[aria-current="page"]{color:var(--brand)}
+@media (prefers-color-scheme: dark){ .tabbar__link[aria-current="page"]{color:var(--accent)} }
+.tabbar__link .icon{width:21px; height:21px}
+.tabbar__label{
+  max-width:100%; text-align:center; line-height:1.15; overflow-wrap:anywhere;
+}
+.tabbar__badge{
+  position:absolute; top:0; right:calc(50% - 20px);
+  min-width:16px; height:16px; padding:0 4px; border-radius:var(--r-full);
+  background:var(--warn); color:#fff; font-size:10px; font-weight:700; line-height:16px; text-align:center;
+}
+@media (min-width:1024px){ .tabbar{display:none} .page{padding-bottom:var(--sp-6)} }
+
+@media (min-width:760px){ .userchip{display:inline-flex} }
+/* La navigation principale n'apparaît que lorsqu'elle tient sans déborder,
+   c'est-à-dire quand la barre d'onglets mobile disparaît. */
+@media (min-width:1024px){ .mainnav{display:block} }
+@media (min-width:1024px){ .brand__sub{font-size:12px} }
+/* Icônes des en-têtes de carte : via le design system, plus de style en ligne */
+.card__head > .icon{color:var(--muted)}
+
+/* Accessibilité : respect des préférences de mouvement */
+@media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
+</style>
+</head>
+<body>
+
+<!-- ===================== Bibliothèque d'icônes (SVG) ====================== -->
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-filecheck" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 3v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L3 9"/><path d="M12 7v5l4 2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="19" r="1.6"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip-link" href="#main">Aller au contenu principal</a>
+
+<!-- ============================ Barre d'application ====================== -->
+<header class="appbar">
+  <div class="appbar__inner">
+    <a class="brand" href="#" aria-label="ISTS Campus, accueil">
+      <span class="brand__mark"><svg class="icon" aria-hidden="true"><use href="#i-cap"></use></svg></span>
+      <span class="brand__text">
+        <span class="brand__name">ISTS Campus</span>
+        <span class="brand__sub">Gestion des dossiers étudiants</span>
+      </span>
+    </a>
+
+    <nav class="mainnav" aria-label="Navigation principale">
+      <ul class="mainnav__list">
+        <li><a class="mainnav__link" href="#" aria-current="page">Vue d'ensemble</a></li>
+        <li><a class="mainnav__link" href="#">Étudiants</a></li>
+        <li><a class="mainnav__link" href="#">Dossiers</a></li>
+        <li><a class="mainnav__link" href="#">Sauvegardes</a></li>
+        <li><a class="mainnav__link" href="#">Journal</a></li>
+      </ul>
+    </nav>
+
+    <div class="appbar__actions">
+      <button class="iconbtn" type="button" aria-label="Rechercher un étudiant ou un dossier">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+      </button>
+      <button class="iconbtn" type="button" aria-label="Notifications, 3 nouvelles demandes">
+        <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
+        <span class="iconbtn__badge">3</span>
+      </button>
+      <button class="userchip" type="button" aria-haspopup="menu">
+        <span class="userchip__avatar" aria-hidden="true">RC</span>
+        <span class="userchip__label">Rectorat</span>
+        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-chevron"></use></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ================================ Contenu ============================== -->
+<main class="page" id="main">
+
+  <!-- Bandeau de maquette — à supprimer une fois la refonte intégrée -->
+  <div class="band" id="demo-band">
+    <svg class="icon icon--sm" aria-hidden="true"><use href="#i-info"></use></svg>
+    <span><strong>Maquette de refonte.</strong> Données de démonstration, aucun traitement réel.</span>
+    <span class="band__tag">V9 · proposition</span>
+    <button class="btn btn--ghost btn--sm" type="button" style="margin-left:auto" data-dismiss="demo-band">
+      <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"></use></svg>
+      Masquer
+    </button>
+  </div>
+
+  <div class="page-head">
+    <div>
+      <h1>Vue d'ensemble</h1>
+      <p class="page-head__sub">Bienvenue, Rectorat. Voici l'état de la base ce jour.</p>
+    </div>
+    <p class="page-head__meta" data-donnee-exemple="horodatage de la dernière vérification">
+      <svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"></use></svg>
+      Dernière vérification : 1<sup>er</sup> octobre 2026, 23 h 27
+    </p>
+  </div>
+
+  <!-- Intégrité des données -->
+  <section aria-labelledby="alert-title">
+    <div class="alert" role="status" data-donnee-exemple="nombre de champs détectés, horodatage et identifiant du rapport">
+      <span class="alert__icon"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"></use></svg></span>
+      <div class="alert__body">
+        <h2 class="alert__title" id="alert-title">25 champs de dossier à compléter</h2>
+        <p class="alert__text">
+          La vérification automatique a identifié 25 champs de dossier présents dans les
+          sauvegardes et absents de la base active. Vous pouvez les restaurer maintenant,
+          ou reporter l'opération sans perte de données.
+        </p>
+
+        <div class="alert__actions">
+          <button class="btn btn--primary" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg>
+            Récupérer maintenant
+          </button>
+          <button class="btn btn--secondary" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-filecheck"></use></svg>
+            Voir le détail
+          </button>
+          <button class="btn btn--ghost" type="button" data-dismiss="alert-card">
+            <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
+            Reporter
+          </button>
+        </div>
+
+        <details class="disclosure">
+          <summary>
+            Détails techniques
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-chevron"></use></svg>
+          </summary>
+          <dl class="kv">
+            <dt>Source analysée</dt><dd>sauvegardes Firestore (6 lots)</dd>
+            <dt>Périmètre</dt><dd>collection « dossiers » · champs incomplets</dd>
+            <dt>Horodatage de l'analyse</dt><dd>2026-10-01T23:27:12Z</dd>
+            <dt>Identifiant du rapport</dt><dd>audit-2026-10-01-b7c2</dd>
+          </dl>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Indicateurs clés -->
+  <section class="stats" aria-label="Indicateurs clés" data-donnee-exemple="les quatre indicateurs et leurs libellés">
+    <article class="stat stat--warn">
+      <div class="stat__top">
+        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-alert"></use></svg>
+        <span class="stat__label">Champs à compléter</span>
+      </div>
+      <p class="stat__value">25</p>
+      <p class="stat__foot">détectés le 1<sup>er</sup> oct.</p>
+    </article>
+
+    <article class="stat">
+      <div class="stat__top">
+        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-users"></use></svg>
+        <span class="stat__label">Étudiants indexés</span>
+      </div>
+      <p class="stat__value">1 248</p>
+      <p class="stat__foot">toutes promotions</p>
+    </article>
+
+    <article class="stat stat--ok">
+      <div class="stat__top">
+        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-database"></use></svg>
+        <span class="stat__label">Sauvegardes vérifiées</span>
+      </div>
+      <p class="stat__value">6 / 6</p>
+      <p class="stat__foot">intégrité confirmée</p>
+    </article>
+
+    <article class="stat">
+      <div class="stat__top">
+        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-bell"></use></svg>
+        <span class="stat__label">Demandes en attente</span>
+      </div>
+      <p class="stat__value">3</p>
+      <p class="stat__foot">à traiter aujourd'hui</p>
+    </article>
+  </section>
+
+  <div class="layout">
+    <!-- Colonne principale -->
+    <div>
+      <!-- Actions rapides -->
+      <section class="section" aria-labelledby="sec-actions">
+        <div class="section__head">
+          <h2 class="section__title" id="sec-actions">Actions rapides</h2>
+          <a class="section__link" href="#">Toutes les opérations <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
+        </div>
+
+        <div class="actions">
+          <button class="action" type="button">
+            <span class="action__icon"><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg></span>
+            <span class="action__body">
+              <span class="action__label">Télécharger une sauvegarde</span>
+              <span class="action__desc">Exporter la base au format archive horodatée.</span>
+            </span>
+          </button>
+
+          <button class="action" type="button">
+            <span class="action__icon"><svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg></span>
+            <span class="action__body">
+              <span class="action__label">Récupérer les étudiants</span>
+              <span class="action__desc">Restaurer les dossiers et leurs données associées.</span>
+            </span>
+          </button>
+
+          <button class="action" type="button">
+            <span class="action__icon"><svg class="icon" aria-hidden="true"><use href="#i-history"></use></svg></span>
+            <span class="action__body">
+              <span class="action__label">Tout récupérer</span>
+              <span class="action__desc">Restaurer l'ensemble des champs depuis l'historique complet des sauvegardes.</span>
+            </span>
+          </button>
+
+          <button class="action" type="button">
+            <span class="action__icon"><svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg></span>
+            <span class="action__body">
+              <span class="action__label">Auditer les dossiers</span>
+              <span class="action__desc">Contrôler l'intégrité et repérer les champs manquants.</span>
+            </span>
+          </button>
+
+          <button class="action" type="button">
+            <span class="action__icon"><svg class="icon" aria-hidden="true"><use href="#i-upload"></use></svg></span>
+            <span class="action__body">
+              <span class="action__label">Importer une sauvegarde</span>
+              <span class="action__desc">Charger une archive externe dans la base active.</span>
+            </span>
+          </button>
+
+          <button class="action" type="button">
+            <span class="action__icon"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg></span>
+            <span class="action__body">
+              <span class="action__label">Vérifier les demandes</span>
+              <span class="action__desc">Examiner les nouvelles inscriptions et réclamations.</span>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Dossiers concernés -->
+      <section class="section" aria-labelledby="sec-files">
+        <div class="section__head">
+          <h2 class="section__title" id="sec-files">Champs à compléter</h2>
+          <a class="section__link" href="#">Voir les 25 champs <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
+        </div>
+
+        <div class="card" data-donnee-exemple="lignes du tableau : étudiant, matricule, champ, date de sauvegarde">
+          <div class="tablewrap">
+            <table class="table">
+              <caption class="sr-only">Champs manquants par étudiant, avec leur origine</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Étudiant</th>
+                  <th scope="col">Matricule</th>
+                  <th scope="col">Champ à compléter</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="is-primary">NGONO Marie-Claire</td>
+                  <td data-label="Matricule" class="mono">ISTS-2025-0148</td>
+                  <td data-label="Champ à compléter"><span class="badge badge--warn">Date de naissance</span></td>
+                  <td data-label="Source" class="mono">12/09/2026</td>
+                  <td data-label="Action">
+                    <button class="rowaction" type="button">Récupérer <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="is-primary">TCHOUAMO Jean-Paul</td>
+                  <td data-label="Matricule" class="mono">ISTS-2024-0932</td>
+                  <td data-label="Champ à compléter"><span class="badge badge--warn">Lieu de naissance</span></td>
+                  <td data-label="Source" class="mono">28/08/2026</td>
+                  <td data-label="Action">
+                    <button class="rowaction" type="button">Récupérer <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="is-primary">MBALLA Estelle</td>
+                  <td data-label="Matricule" class="mono">ISTS-2026-0057</td>
+                  <td data-label="Champ à compléter"><span class="badge badge--warn">Contact du tuteur</span></td>
+                  <td data-label="Source" class="mono">04/09/2026</td>
+                  <td data-label="Action">
+                    <button class="rowaction" type="button">Récupérer <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="is-primary">FOTSO Bertrand</td>
+                  <td data-label="Matricule" class="mono">ISTS-2023-1187</td>
+                  <td data-label="Champ à compléter"><span class="badge badge--warn">Numéro de matricule</span></td>
+                  <td data-label="Source" class="mono">19/07/2026</td>
+                  <td data-label="Action">
+                    <button class="rowaction" type="button">Récupérer <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table__empty" style="border-top:1px solid var(--border)">
+            21 autres champs concernés — <a href="#">afficher la liste complète</a>
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Colonne latérale -->
+    <aside class="aside" data-donnee-exemple="état de la base et activité récente">
+      <div class="card">
+        <div class="card__head">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-database"></use></svg>
+          <div>
+            <h2 class="card__title">État de la base</h2>
+            <p class="card__hint">Synchronisation du 1<sup>er</sup> octobre 2026</p>
+          </div>
+        </div>
+        <div class="card__body">
+          <div class="meter">
+            <div class="meter__row"><span class="meter__label">Dossiers complets</span><span class="meter__value">96 %</span></div>
+            <div class="meter__track"><div class="meter__fill meter__fill--warn" style="width:96%"></div></div>
+          </div>
+          <div class="meter">
+            <div class="meter__row"><span class="meter__label">Sauvegardes vérifiées</span><span class="meter__value">6 / 6</span></div>
+            <div class="meter__track"><div class="meter__fill meter__fill--ok" style="width:100%"></div></div>
+          </div>
+          <div class="meter">
+            <div class="meter__row"><span class="meter__label">Demandes traitées</span><span class="meter__value">82 %</span></div>
+            <div class="meter__track"><div class="meter__fill" style="width:82%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-history"></use></svg>
+          <h2 class="card__title">Activité récente</h2>
+        </div>
+        <div class="card__body">
+          <ul class="timeline">
+            <li>
+              <span class="timeline__dot"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-shield"></use></svg></span>
+              <div>
+                <p class="timeline__text">Audit automatique terminé : 25 champs manquants signalés.</p>
+                <p class="timeline__time">Aujourd'hui, 14 h 35</p>
+              </div>
+            </li>
+            <li>
+              <span class="timeline__dot"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-upload"></use></svg></span>
+              <div>
+                <p class="timeline__text">Sauvegarde <span class="mono">lot-06</span> importée et contrôlée.</p>
+                <p class="timeline__time">Aujourd'hui, 09 h 12</p>
+              </div>
+            </li>
+            <li>
+              <span class="timeline__dot"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"></use></svg></span>
+              <div>
+                <p class="timeline__text">12 dossiers complétés par le service de la scolarité.</p>
+                <p class="timeline__time">Hier, 17 h 48</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- ========================= Navigation basse (mobile) =================== -->
+<nav class="tabbar" aria-label="Navigation mobile">
+  <ul class="tabbar__list">
+    <li class="tabbar__item">
+      <a class="tabbar__link" href="#" aria-current="page">
+        <svg class="icon" aria-hidden="true"><use href="#i-grid"></use></svg>
+        <span class="tabbar__label">Accueil</span>
+      </a>
+    </li>
+    <li class="tabbar__item">
+      <a class="tabbar__link" href="#">
+        <svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg>
+        <span class="tabbar__label">Étudiants</span>
+      </a>
+    </li>
+    <li class="tabbar__item">
+      <a class="tabbar__link" href="#">
+        <svg class="icon" aria-hidden="true"><use href="#i-folder"></use></svg>
+        <span class="tabbar__label">Dossiers</span>
+        <span class="tabbar__badge">25</span>
+      </a>
+    </li>
+    <li class="tabbar__item">
+      <a class="tabbar__link" href="#">
+        <svg class="icon" aria-hidden="true"><use href="#i-database"></use></svg>
+        <span class="tabbar__label">Sauvegardes</span>
+      </a>
+    </li>
+    <li class="tabbar__item">
+      <a class="tabbar__link" href="#">
+        <svg class="icon" aria-hidden="true"><use href="#i-more"></use></svg>
+        <span class="tabbar__label">Plus</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<script>
+// Comportements de démonstration uniquement (aucun appel réseau dans la maquette).
+document.querySelectorAll('[data-dismiss]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var target = btn.closest('.band, .alert, .card');
+    if (target) target.remove();
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,857 @@
+<!-- ==========================================================================
+     ISTS Campus — section « Vue d'ensemble » prête à coller
+     Générée par tools/generer-bloc.py — ne pas modifier à la main.
+
+     MODE D'EMPLOI
+       1. Ouvrez votre fichier ISTS-CAMPUS-ACCES-COURS-RAPIDE-V8…html.
+       2. Repérez votre section « Vue d'ensemble » et REMPLACEZ-LA par tout ce
+          qui suit, du <section> initial jusqu'à </section> final inclus.
+       3. Enregistrez, rechargez la page : le nouveau rendu s'applique.
+
+     CE QUI EST INCLUS
+       · le programme de style (porté par .ists-v9, donc sans effet sur le
+         reste de votre application) ;
+       · les vingt icônes SVG (plus aucun emoji) ;
+       · la structure de l'écran : bandeau d'intégrité, indicateurs, actions,
+         tableau des champs à compléter.
+
+     À SAVOIR
+       · L'identifiant id="vue-ensemble" est celui de la section. Si votre
+         JavaScript s'appuie sur un identifiant différent, remplacez-le ici.
+       · Toutes les classes sont préfixées « ists- » et le style est porté par
+         .ists-v9 : aucun risque de conflit avec votre propre feuille.
+
+     À FAIRE APRÈS LE COLLAGE
+
+       1) RELIER LES BOUTONS
+          Sur chacun des 15 contrôles annotés data-action="TODO", mettez votre
+          fonction existante. Exemple :
+              <button class="ists-btn ists-btn--primary" type="button"
+                      onclick="recupererMaintenant()">
+          Vos fonctions ne sont pas modifiées : seul le bouton qui les appelle change.
+
+       2) REMPLACER LES DONNÉES DE DÉMONSTRATION
+          Les chiffres et les noms présents ici sont FICTIFS. Les cinq zones
+          concernées portent l'attribut data-donnee-exemple, qui décrit ce
+          qu'elles contiennent :
+              · l'horodatage de la dernière vérification   (page-head__meta)
+              · le bandeau : nombre de champs, horodatage, n° de rapport
+              · les quatre indicateurs clés
+              · les lignes du tableau (étudiants, matricules, champs, dates)
+              · l'état de la base et l'activité récente
+          Remplissez-les depuis vos données réelles, puis retirez l'attribut.
+
+          L'audit les signale tant qu'ils sont présents :
+              · 15 avertissements « Annotation TODO »     (contrôles à relier)
+              ·  5 avertissements « Donnée de démonstration » (à remplacer)
+       · Ajoutez <meta name="viewport" content="width=device-width, initial-scale=1">
+         dans votre <head> : sans elle, l'écran reste tronqué sur téléphone.
+       · Ajoutez lang="fr" sur votre balise <html>.
+
+     VÉRIFIER
+       node tools/audit-ui.mjs votre-fichier.html
+     ========================================================================== -->
+
+<style id="ists-icons">
+.ists-icon {width:20px; height:20px; flex:0 0 auto; stroke:currentColor; fill:none;
+      stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+.ists-icon--sm {width:16px; height:16px}
+.ists-icon--lg {width:24px; height:24px}
+.ists-sprite {display:none}
+</style>
+<style id="ists-design-system">
+/* ==========================================================================
+   ISTS Campus — design system porté (Potter's Bible University)
+   Version sûre à intégrer dans l'application : tout est porté par `.ists-v9`,
+   jetons renommés `--ists-…`. Aucun effet hors du conteneur .ists-v9.
+   Fichier GÉNÉRÉ depuis design/index.html par tools/extraire-design-system.py
+   Ne pas modifier à la main : modifier la maquette puis relancer le script.
+   ========================================================================== */
+
+.ists-v9 {--ists-bg:#f4f6f9;
+  --ists-surface:#ffffff;
+  --ists-surface-2:#f8fafc;
+  --ists-surface-3:#eef2f7;
+  --ists-border:#dde3ec;
+  --ists-border-strong:#c6cfdd;
+  --ists-text:#0f1a2b;
+  --ists-text-2:#3f4d63;
+  --ists-muted:#6b7a92;
+
+  
+  --ists-brand:#1b3f77;
+  --ists-brand-600:#24518f;
+  --ists-brand-050:#eaf0fa;
+  --ists-accent:#2563eb;
+  --ists-warn:#9a5b00;
+  --ists-warn-bg:#fdf5e6;
+  --ists-warn-border:#f0dcb4;
+  --ists-ok:#0f6b52;
+  --ists-ok-bg:#e8f5f0;
+  --ists-danger:#a32626;
+  --ists-danger-bg:#fdeced;
+
+  
+  --ists-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  --ists-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+
+  
+  --ists-r-sm:8px; --ists-r-md:12px; --ists-r-lg:16px; --ists-r-full:999px;
+  --ists-sp-1:4px; --ists-sp-2:8px; --ists-sp-3:12px; --ists-sp-4:16px; --ists-sp-5:20px; --ists-sp-6:24px; --ists-sp-8:32px;
+  --ists-shadow-sm:0 1px 2px rgba(15,26,43,.06),0 1px 3px rgba(15,26,43,.05);
+  --ists-shadow-md:0 4px 12px rgba(15,26,43,.08),0 1px 3px rgba(15,26,43,.05);
+  --ists-ring:0 0 0 3px rgba(37,99,235,.32);
+  --ists-header-h:60px;}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 {--ists-bg:#0b1220; --ists-surface:#111a2b; --ists-surface-2:#151f33; --ists-surface-3:#1b273e;
+    --ists-border:#26334b; --ists-border-strong:#35455f;
+    --ists-text:#eaf0f8; --ists-text-2:#c2cddc; --ists-muted:#93a2b8;
+    --ists-brand:#9dc0ff; --ists-brand-600:#b9d2ff; --ists-brand-050:#1a2740;
+    --ists-accent:#6ea8fe;
+    --ists-warn:#f0c07a; --ists-warn-bg:#2c2413; --ists-warn-border:#4a3a1c;
+    --ists-ok:#7fd8bd; --ists-ok-bg:#122b25;
+    --ists-danger:#f4a1a4; --ists-danger-bg:#2e1518;
+    --ists-shadow-sm:0 1px 2px rgba(0,0,0,.4); --ists-shadow-md:0 4px 14px rgba(0,0,0,.45);}
+}
+
+.ists-v9 *, .ists-v9 *::before, .ists-v9 *::after {box-sizing:border-box}
+
+.ists-v9 {margin:0; background:var(--ists-bg); color:var(--ists-text);
+  font-family:var(--ists-font); font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;}
+
+.ists-v9 h1, .ists-v9 h2, .ists-v9 h3, .ists-v9 p {margin:0}
+
+.ists-v9 button {font:inherit; color:inherit}
+
+.ists-v9 a {color:var(--ists-accent)}
+
+.ists-v9 :focus-visible {outline:none; box-shadow:var(--ists-ring); border-radius:6px}
+
+.ists-v9 .ists-icon {width:20px; height:20px; flex:0 0 auto; stroke:currentColor; fill:none;
+      stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+
+.ists-v9 .ists-icon--sm {width:16px; height:16px}
+
+.ists-v9 .ists-icon--lg {width:24px; height:24px}
+
+.ists-v9 .sprite {display:none}
+
+.ists-v9 .skip-link {position:absolute; left:-9999px; top:0; z-index:100; background:var(--ists-surface);
+  padding:10px 16px; border-radius:0 0 var(--ists-r-sm) 0; text-decoration:none}
+
+.ists-v9 .skip-link:focus {left:0}
+
+.ists-v9 .ists-sr-only {position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+
+.ists-v9 .appbar {position:sticky; top:0; z-index:40; background:var(--ists-surface);
+  border-bottom:1px solid var(--ists-border); box-shadow:var(--ists-shadow-sm);
+  padding-top:env(safe-area-inset-top);}
+
+.ists-v9 .appbar__inner {max-width:1240px; margin:0 auto; min-height:var(--ists-header-h);
+  padding:0 var(--ists-sp-4); display:flex; align-items:center; gap:var(--ists-sp-4);}
+
+.ists-v9 .brand {display:flex; align-items:center; gap:10px; min-width:0; text-decoration:none; color:inherit}
+
+.ists-v9 .brand__mark {width:34px; height:34px; flex:0 0 auto; border-radius:9px;
+  background:var(--ists-brand); color:#fff; display:grid; place-items:center;}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .brand__mark {background:var(--ists-brand-600); color:#0b1220}
+}
+
+.ists-v9 .brand__mark .ists-icon {width:19px; height:19px; stroke-width:1.9}
+
+.ists-v9 .brand__text {min-width:0}
+
+.ists-v9 .brand__name {font-size:15px; font-weight:650; letter-spacing:-.01em; white-space:nowrap}
+
+.ists-v9 .brand__sub {font-size:11.5px; color:var(--ists-muted); white-space:nowrap}
+
+@media (max-width:399px) {
+.ists-v9 .brand__sub {display:none}
+}
+
+.ists-v9 .mainnav {display:none; margin-left:var(--ists-sp-4)}
+
+.ists-v9 .mainnav__list {display:flex; gap:2px; list-style:none; margin:0; padding:0}
+
+.ists-v9 .mainnav__link {display:block; padding:8px 12px; border-radius:var(--ists-r-sm); text-decoration:none;
+  color:var(--ists-text-2); font-size:14px; font-weight:520; white-space:nowrap;}
+
+.ists-v9 .mainnav__link:hover {background:var(--ists-surface-3); color:var(--ists-text)}
+
+.ists-v9 .mainnav__link[aria-current="page"] {background:var(--ists-brand-050); color:var(--ists-brand); font-weight:620}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .mainnav__link[aria-current="page"] {color:var(--ists-accent)}
+}
+
+.ists-v9 .appbar__actions {margin-left:auto; display:flex; align-items:center; gap:var(--ists-sp-2)}
+
+.ists-v9 .iconbtn {position:relative; width:38px; height:38px; display:grid; place-items:center;
+  background:transparent; border:1px solid transparent; border-radius:10px; cursor:pointer; color:var(--ists-text-2);}
+
+.ists-v9 .iconbtn:hover {background:var(--ists-surface-3); color:var(--ists-text)}
+
+.ists-v9 .iconbtn__badge {position:absolute; top:4px; right:4px; min-width:17px; height:17px; padding:0 4px;
+  border-radius:var(--ists-r-full); background:var(--ists-danger); color:#fff;
+  font-size:10.5px; font-weight:700; line-height:17px; text-align:center; border:2px solid var(--ists-surface);}
+
+.ists-v9 .userchip {display:none; align-items:center; gap:8px; padding:5px 10px 5px 5px;
+  border:1px solid var(--ists-border); border-radius:var(--ists-r-full); background:var(--ists-surface); cursor:pointer;}
+
+.ists-v9 .userchip:hover {border-color:var(--ists-border-strong)}
+
+.ists-v9 .userchip__avatar {width:26px; height:26px; border-radius:50%; background:var(--ists-brand-050); color:var(--ists-brand);
+  display:grid; place-items:center; font-size:11px; font-weight:700;}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .userchip__avatar {color:var(--ists-accent)}
+}
+
+.ists-v9 .userchip__label {font-size:13px; font-weight:560; white-space:nowrap}
+
+.ists-v9 .page {max-width:1240px; margin:0 auto; padding:var(--ists-sp-5) var(--ists-sp-4);
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));}
+
+.ists-v9 .band {background:var(--ists-brand-050); border:1px solid var(--ists-border); border-radius:var(--ists-r-md);
+  padding:10px var(--ists-sp-4); margin-bottom:var(--ists-sp-5);
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  font-size:13px; color:var(--ists-text-2);}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .band {background:var(--ists-surface-2)}
+}
+
+.ists-v9 .band .ists-icon {color:var(--ists-brand)}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .band .ists-icon {color:var(--ists-accent)}
+}
+
+.ists-v9 .band__tag {font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  background:var(--ists-surface); border:1px solid var(--ists-border); border-radius:var(--ists-r-full);
+  padding:2px 8px; color:var(--ists-text-2);}
+
+.ists-v9 .ists-page-head {display:flex; align-items:flex-end; justify-content:space-between;
+  gap:var(--ists-sp-4); flex-wrap:wrap; margin-bottom:var(--ists-sp-5);}
+
+.ists-v9 .ists-page-head h1 {font-size:26px; line-height:1.2; letter-spacing:-.02em; font-weight:680}
+
+.ists-v9 .ists-page-head__sub {color:var(--ists-muted); font-size:14px; margin-top:4px}
+
+.ists-v9 .ists-page-head__meta {display:flex; align-items:center; gap:6px; color:var(--ists-muted); font-size:12.5px;
+  font-variant-numeric:tabular-nums;}
+
+.ists-v9 .ists-layout {display:grid; gap:var(--ists-sp-5)}
+
+@media (min-width:1024px) {
+.ists-v9 .ists-layout {grid-template-columns:minmax(0,1fr) 320px; align-items:start}
+}
+
+.ists-v9 .ists-card {background:var(--ists-surface); border:1px solid var(--ists-border); border-radius:var(--ists-r-lg);
+  box-shadow:var(--ists-shadow-sm);}
+
+.ists-v9 .ists-card + .ists-card {margin-top:var(--ists-sp-5)}
+
+.ists-v9 .ists-card__head {display:flex; align-items:center; gap:var(--ists-sp-3);
+  padding:var(--ists-sp-4) var(--ists-sp-5); border-bottom:1px solid var(--ists-border);}
+
+.ists-v9 .ists-card__title {font-size:15px; font-weight:640; letter-spacing:-.01em}
+
+.ists-v9 .ists-card__hint {font-size:12.5px; color:var(--ists-muted)}
+
+.ists-v9 .ists-card__body {padding:var(--ists-sp-5)}
+
+.ists-v9 .ists-section {margin-top:var(--ists-sp-6)}
+
+.ists-v9 .ists-section__head {display:flex; align-items:baseline; justify-content:space-between; gap:var(--ists-sp-4); margin-bottom:var(--ists-sp-3)}
+
+.ists-v9 .ists-section__title {font-size:16px; font-weight:640; letter-spacing:-.01em}
+
+.ists-v9 .ists-section__link {font-size:13px; font-weight:560; text-decoration:none; display:inline-flex; align-items:center; gap:4px}
+
+.ists-v9 .ists-btn {display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  min-height:40px; padding:9px 16px; border-radius:10px; border:1px solid transparent;
+  font-size:14px; font-weight:580; cursor:pointer; text-decoration:none;
+  white-space:normal; text-align:center; 
+  transition:background-color .15s, border-color .15s, box-shadow .15s;}
+
+.ists-v9 .ists-btn .ists-icon {width:18px; height:18px}
+
+.ists-v9 .ists-btn--primary {background:var(--ists-brand); color:#fff; box-shadow:var(--ists-shadow-sm)}
+
+.ists-v9 .btn--ists-primary:hover {background:var(--ists-brand-600)}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .ists-btn--primary {background:var(--ists-accent); color:#0b1220}
+}
+
+.ists-v9 .ists-btn--secondary {background:var(--ists-surface); color:var(--ists-text); border-color:var(--ists-border-strong)}
+
+.ists-v9 .btn--ists-secondary:hover {background:var(--ists-surface-3)}
+
+.ists-v9 .ists-btn--ghost {background:transparent; color:var(--ists-text-2)}
+
+.ists-v9 .btn--ists-ghost:hover {background:var(--ists-surface-3); color:var(--ists-text)}
+
+.ists-v9 .btn--sm {min-height:34px; padding:6px 12px; font-size:13px; border-radius:9px}
+
+.ists-v9 .btn--block {width:100%}
+
+.ists-v9 .ists-btn[disabled] {opacity:.5; cursor:not-allowed}
+
+.ists-v9 .ists-alert {display:flex; gap:var(--ists-sp-4); padding:var(--ists-sp-4) var(--ists-sp-5);
+  background:var(--ists-warn-bg); border:1px solid var(--ists-warn-border); border-radius:var(--ists-r-lg);}
+
+.ists-v9 .ists-alert__icon {width:38px; height:38px; flex:0 0 auto; border-radius:10px; display:grid; place-items:center;
+  background:rgba(154,91,0,.12); color:var(--ists-warn);}
+
+.ists-v9 .ists-alert__body {min-width:0; flex:1 1 auto}
+
+.ists-v9 .ists-alert__title {font-size:15.5px; font-weight:660; letter-spacing:-.01em; color:var(--ists-text)}
+
+.ists-v9 .ists-alert__text {font-size:13.5px; color:var(--ists-text-2); margin-top:4px; max-width:70ch}
+
+.ists-v9 .ists-alert__actions {display:flex; flex-wrap:wrap; gap:var(--ists-sp-2); margin-top:var(--ists-sp-4);}
+
+.ists-v9 .ists-alert__actions .ists-btn {flex:0 1 auto}
+
+@media (max-width:560px) {
+.ists-v9 .ists-alert__actions .ists-btn {flex:1 1 100%}
+}
+
+.ists-v9 .ists-disclosure {margin-top:var(--ists-sp-3); border-top:1px dashed var(--ists-warn-border); padding-top:var(--ists-sp-3)}
+
+.ists-v9 .ists-disclosure > summary {cursor:pointer; font-size:12.5px; font-weight:580; color:var(--ists-text-2);
+  display:inline-flex; align-items:center; gap:6px; list-style:none;}
+
+.ists-v9 .ists-disclosure > summary::-webkit-details-marker {display:none}
+
+.ists-v9 .ists-disclosure > summary .ists-icon {transition:transform .18s}
+
+.ists-v9 .ists-disclosure[open] > summary .ists-icon {transform:rotate(180deg)}
+
+.ists-v9 .ists-kv {margin:var(--ists-sp-3) 0 0; display:grid; gap:2px;
+  grid-template-columns:auto; font-size:12.5px;}
+
+@media (min-width:560px) {
+.ists-v9 .ists-kv {grid-template-columns:190px minmax(0,1fr)}
+}
+
+.ists-v9 .ists-kv dt {color:var(--ists-muted); padding:3px 0}
+
+.ists-v9 .ists-kv dd {margin:0; padding:3px 0; font-family:var(--ists-mono); font-size:12px; word-break:break-word}
+
+.ists-v9 .ists-stats {display:grid; gap:var(--ists-sp-3); grid-template-columns:repeat(2,minmax(0,1fr)); margin-top:var(--ists-sp-5)}
+
+@media (min-width:900px) {
+.ists-v9 .ists-stats {grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+
+.ists-v9 .ists-stat {background:var(--ists-surface); border:1px solid var(--ists-border); border-radius:var(--ists-r-lg);
+  padding:var(--ists-sp-4); box-shadow:var(--ists-shadow-sm); min-width:0;}
+
+.ists-v9 .ists-stat__top {display:flex; align-items:center; gap:8px; color:var(--ists-muted)}
+
+.ists-v9 .ists-stat__label {font-size:12.5px; font-weight:560; line-height:1.3}
+
+.ists-v9 .ists-stat__value {font-size:28px; font-weight:680; letter-spacing:-.03em; margin-top:8px;
+  font-variant-numeric:tabular-nums; line-height:1.1;}
+
+.ists-v9 .ists-stat__foot {font-size:12px; margin-top:6px; color:var(--ists-muted)}
+
+.ists-v9 .ists-stat--warn .ists-stat__value {color:var(--ists-warn)}
+
+.ists-v9 .ists-stat--warn .ists-stat__top .ists-icon {color:var(--ists-warn)}
+
+.ists-v9 .ists-stat--ok .ists-stat__value {color:var(--ists-ok)}
+
+.ists-v9 .ists-actions {display:grid; gap:var(--ists-sp-3); grid-template-columns:minmax(0,1fr); margin-top:var(--ists-sp-3)}
+
+@media (min-width:640px) {
+.ists-v9 .ists-actions {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media (min-width:1024px) {
+.ists-v9 .ists-actions {grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+.ists-v9 .ists-action {display:flex; gap:var(--ists-sp-3); align-items:flex-start; width:100%; text-align:left;
+  background:var(--ists-surface); border:1px solid var(--ists-border); border-radius:var(--ists-r-md);
+  padding:var(--ists-sp-4); cursor:pointer; box-shadow:var(--ists-shadow-sm); min-width:0;}
+
+.ists-v9 .ists-action:hover {border-color:var(--ists-border-strong); background:var(--ists-surface-2)}
+
+.ists-v9 .ists-action__icon {width:36px; height:36px; flex:0 0 auto; border-radius:9px; display:grid; place-items:center;
+  background:var(--ists-brand-050); color:var(--ists-brand); border:1px solid var(--ists-border);}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .ists-action__icon {color:var(--ists-accent)}
+}
+
+.ists-v9 .ists-action__body {min-width:0}
+
+.ists-v9 .ists-action__label {font-size:14px; font-weight:600; letter-spacing:-.01em}
+
+.ists-v9 .ists-action__desc {font-size:12.5px; color:var(--ists-muted); margin-top:3px}
+
+.ists-v9 .ists-tablewrap {overflow-x:auto}
+
+.ists-v9 table.ists-table {width:100%; border-collapse:collapse; font-size:13.5px}
+
+.ists-v9 .ists-table th {text-align:left; font-size:11.5px; font-weight:680; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--ists-muted); padding:10px var(--ists-sp-5); background:var(--ists-surface-2);
+  border-bottom:1px solid var(--ists-border); white-space:nowrap;}
+
+.ists-v9 .ists-table td {padding:13px var(--ists-sp-5); border-bottom:1px solid var(--ists-border); vertical-align:middle}
+
+.ists-v9 .ists-table tr:last-child td {border-bottom:0}
+
+.ists-v9 .ists-table tbody tr:hover {background:var(--ists-surface-2)}
+
+.ists-v9 .cell-name {font-weight:600}
+
+.ists-v9 .cell-sub {font-size:12px; color:var(--ists-muted); margin-top:2px}
+
+.ists-v9 .ists-mono {font-family:var(--ists-mono); font-size:12.5px}
+
+.ists-v9 .ists-badge {display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--ists-r-full);
+  font-size:11.5px; font-weight:620; border:1px solid transparent; white-space:nowrap;}
+
+.ists-v9 .ists-badge--warn {background:var(--ists-warn-bg); color:var(--ists-warn); border-color:var(--ists-warn-border)}
+
+.ists-v9 .badge--ok {background:var(--ists-ok-bg); color:var(--ists-ok)}
+
+.ists-v9 .badge--neutral {background:var(--ists-surface-3); color:var(--ists-text-2); border-color:var(--ists-border)}
+
+.ists-v9 .ists-rowaction {background:none; border:0; padding:4px 0; cursor:pointer; font-size:13px; font-weight:600;
+  color:var(--ists-accent); display:inline-flex; align-items:center; gap:5px; white-space:nowrap;}
+
+.ists-v9 .ists-table__empty {padding:var(--ists-sp-6); text-align:center; color:var(--ists-muted); font-size:13.5px}
+
+@media (max-width:767px) {
+.ists-v9 .ists-table thead {position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+
+.ists-v9 .ists-table, .ists-v9 .ists-table tbody, .ists-v9 .ists-table tr, .ists-v9 .ists-table td {display:block; width:100%}
+
+.ists-v9 .ists-table tr {border-bottom:1px solid var(--ists-border); padding:var(--ists-sp-3) var(--ists-sp-4);
+    display:grid; grid-template-columns:1fr auto; gap:2px var(--ists-sp-3);}
+
+.ists-v9 .ists-table td {border:0; padding:2px 0}
+
+.ists-v9 .ists-table td[data-label] {display:flex; gap:8px; align-items:baseline; grid-column:1 / -1}
+
+.ists-v9 .ists-table td[data-label]::before {content:attr(data-label); flex:0 0 108px; color:var(--ists-muted); font-size:12px;}
+
+.ists-v9 .ists-table td.ists-is-primary {grid-column:1 / -1; font-weight:600}
+
+.ists-v9 .ists-table td.ists-is-primary::before {display:none}
+
+.ists-v9 .ists-table td[data-label="Action"] {grid-column:1 / -1; padding-top:8px}
+
+.ists-v9 .ists-table td[data-label="Action"]::before {display:none}
+}
+
+.ists-v9 .ists-aside .ists-card__body {padding:var(--ists-sp-5)}
+
+.ists-v9 .ists-meter + .ists-meter {margin-top:var(--ists-sp-4)}
+
+.ists-v9 .ists-meter__row {display:flex; justify-content:space-between; gap:var(--ists-sp-3); font-size:13px; margin-bottom:6px}
+
+.ists-v9 .ists-meter__label {color:var(--ists-text-2); font-weight:540}
+
+.ists-v9 .ists-meter__value {color:var(--ists-muted); font-variant-numeric:tabular-nums; font-weight:600}
+
+.ists-v9 .ists-meter__track {height:7px; border-radius:var(--ists-r-full); background:var(--ists-surface-3); overflow:hidden}
+
+.ists-v9 .ists-meter__fill {height:100%; border-radius:inherit; background:var(--ists-brand)}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .ists-meter__fill {background:var(--ists-accent)}
+}
+
+.ists-v9 .ists-meter__fill--ok {background:var(--ists-ok)}
+
+.ists-v9 .ists-meter__fill--warn {background:var(--ists-warn)}
+
+.ists-v9 .ists-timeline {list-style:none; margin:0; padding:0}
+
+.ists-v9 .ists-timeline li {display:flex; gap:var(--ists-sp-3); padding:var(--ists-sp-3) 0; border-bottom:1px solid var(--ists-border)}
+
+.ists-v9 .ists-timeline li:last-child {border-bottom:0; padding-bottom:0}
+
+.ists-v9 .ists-timeline__dot {width:28px; height:28px; flex:0 0 auto; border-radius:50%; display:grid; place-items:center;
+  background:var(--ists-surface-3); color:var(--ists-text-2);}
+
+.ists-v9 .ists-timeline__text {font-size:13px; line-height:1.45; min-width:0}
+
+.ists-v9 .ists-timeline__time {font-size:11.5px; color:var(--ists-muted); margin-top:2px; font-variant-numeric:tabular-nums}
+
+.ists-v9 .tabbar {position:fixed; left:0; right:0; bottom:0; z-index:40;
+  background:var(--ists-surface); 
+  background:color-mix(in srgb, var(--ists-surface) 92%, transparent);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-top:1px solid var(--ists-border);
+  padding-bottom:env(safe-area-inset-bottom);}
+
+.ists-v9 .tabbar__list {display:flex; list-style:none; margin:0; padding:6px 4px; max-width:600px; margin-inline:auto}
+
+.ists-v9 .tabbar__item {flex:1 1 0; min-width:0}
+
+.ists-v9 .tabbar__link {position:relative; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 2px; border-radius:10px; text-decoration:none; color:var(--ists-muted); font-size:10.5px; font-weight:560;}
+
+.ists-v9 .tabbar__link[aria-current="page"] {color:var(--ists-brand)}
+
+@media (prefers-color-scheme: dark) {
+.ists-v9 .tabbar__link[aria-current="page"] {color:var(--ists-accent)}
+}
+
+.ists-v9 .tabbar__link .ists-icon {width:21px; height:21px}
+
+.ists-v9 .tabbar__label {max-width:100%; text-align:center; line-height:1.15; overflow-wrap:anywhere;}
+
+.ists-v9 .tabbar__badge {position:absolute; top:0; right:calc(50% - 20px);
+  min-width:16px; height:16px; padding:0 4px; border-radius:var(--ists-r-full);
+  background:var(--ists-warn); color:#fff; font-size:10px; font-weight:700; line-height:16px; text-align:center;}
+
+@media (min-width:1024px) {
+.ists-v9 .tabbar {display:none}
+
+.ists-v9 .page {padding-bottom:var(--ists-sp-6)}
+}
+
+@media (min-width:760px) {
+.ists-v9 .userchip {display:inline-flex}
+}
+
+@media (min-width:1024px) {
+.ists-v9 .mainnav {display:block}
+}
+
+@media (min-width:1024px) {
+.ists-v9 .brand__sub {font-size:12px}
+}
+
+.ists-v9 .ists-card__head > .ists-icon {color:var(--ists-muted)}
+
+@media (prefers-reduced-motion:reduce) {
+.ists-v9 * {transition:none !important; animation:none !important}
+}
+</style>
+<svg class="ists-sprite" id="ists-icon-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="ists-i-cap" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></symbol>
+    <symbol id="ists-i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="ists-i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="ists-i-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="ists-i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
+    <symbol id="ists-i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+    <symbol id="ists-i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></symbol>
+    <symbol id="ists-i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></symbol>
+    <symbol id="ists-i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></symbol>
+    <symbol id="ists-i-refresh" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+    <symbol id="ists-i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="ists-i-filecheck" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></symbol>
+    <symbol id="ists-i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="ists-i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="ists-i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="ists-i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></symbol>
+    <symbol id="ists-i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="ists-i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></symbol>
+    <symbol id="ists-i-history" viewBox="0 0 24 24"><path d="M3 3v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L3 9"/><path d="M12 7v5l4 2"/></symbol>
+    <symbol id="ists-i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+    <symbol id="ists-i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="19" r="1.6"/></symbol>
+  </defs>
+</svg>
+
+<section class="ists-v9" id="vue-ensemble">
+<!-- Bandeau de maquette — à supprimer une fois la refonte intégrée -->
+
+
+  <div class="ists-page-head">
+    <div>
+      <h1>Vue d'ensemble</h1>
+      <p class="ists-page-head__sub">Bienvenue, Rectorat. Voici l'état de la base ce jour.</p>
+    </div>
+    <p class="ists-page-head__meta" data-donnee-exemple="horodatage de la dernière vérification">
+      <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-clock"></use></svg>
+      Dernière vérification : 1<sup>er</sup> octobre 2026, 23 h 27
+    </p>
+  </div>
+
+  <!-- Intégrité des données -->
+  <section aria-labelledby="alert-title">
+    <div class="ists-alert" role="status" data-donnee-exemple="nombre de champs détectés, horodatage et identifiant du rapport">
+      <span class="ists-alert__icon"><svg class="ists-icon ists-icon--lg" aria-hidden="true"><use href="#ists-i-alert"></use></svg></span>
+      <div class="ists-alert__body">
+        <h2 class="ists-alert__title" id="alert-title">25 champs de dossier à compléter</h2>
+        <p class="ists-alert__text">
+          La vérification automatique a identifié 25 champs de dossier présents dans les
+          sauvegardes et absents de la base active. Vous pouvez les restaurer maintenant,
+          ou reporter l'opération sans perte de données.
+        </p>
+
+        <div class="ists-alert__actions">
+          <button class="ists-btn ists-btn--primary" type="button" data-action="TODO">
+            <svg class="ists-icon" aria-hidden="true"><use href="#ists-i-refresh"></use></svg>
+            Récupérer maintenant
+          </button>
+          <button class="ists-btn ists-btn--secondary" type="button" data-action="TODO">
+            <svg class="ists-icon" aria-hidden="true"><use href="#ists-i-filecheck"></use></svg>
+            Voir le détail
+          </button>
+          <button class="ists-btn ists-btn--ghost" type="button" data-dismiss="alert-card" data-action="TODO">
+            <svg class="ists-icon" aria-hidden="true"><use href="#ists-i-x"></use></svg>
+            Reporter
+          </button>
+        </div>
+
+        <details class="ists-disclosure">
+          <summary>
+            Détails techniques
+            <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-chevron"></use></svg>
+          </summary>
+          <dl class="ists-kv">
+            <dt>Source analysée</dt><dd>sauvegardes Firestore (6 lots)</dd>
+            <dt>Périmètre</dt><dd>collection « dossiers » · champs incomplets</dd>
+            <dt>Horodatage de l'analyse</dt><dd>2026-10-01T23:27:12Z</dd>
+            <dt>Identifiant du rapport</dt><dd>audit-2026-10-01-b7c2</dd>
+          </dl>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Indicateurs clés -->
+  <section class="ists-stats" aria-label="Indicateurs clés" data-donnee-exemple="les quatre indicateurs et leurs libellés">
+    <article class="ists-stat ists-stat--warn">
+      <div class="ists-stat__top">
+        <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-alert"></use></svg>
+        <span class="ists-stat__label">Champs à compléter</span>
+      </div>
+      <p class="ists-stat__value">25</p>
+      <p class="ists-stat__foot">détectés le 1<sup>er</sup> oct.</p>
+    </article>
+
+    <article class="ists-stat">
+      <div class="ists-stat__top">
+        <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-users"></use></svg>
+        <span class="ists-stat__label">Étudiants indexés</span>
+      </div>
+      <p class="ists-stat__value">1 248</p>
+      <p class="ists-stat__foot">toutes promotions</p>
+    </article>
+
+    <article class="ists-stat ists-stat--ok">
+      <div class="ists-stat__top">
+        <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-database"></use></svg>
+        <span class="ists-stat__label">Sauvegardes vérifiées</span>
+      </div>
+      <p class="ists-stat__value">6 / 6</p>
+      <p class="ists-stat__foot">intégrité confirmée</p>
+    </article>
+
+    <article class="ists-stat">
+      <div class="ists-stat__top">
+        <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-bell"></use></svg>
+        <span class="ists-stat__label">Demandes en attente</span>
+      </div>
+      <p class="ists-stat__value">3</p>
+      <p class="ists-stat__foot">à traiter aujourd'hui</p>
+    </article>
+  </section>
+
+  <div class="ists-layout">
+    <!-- Colonne principale -->
+    <div>
+      <!-- Actions rapides -->
+      <section class="ists-section" aria-labelledby="sec-actions">
+        <div class="ists-section__head">
+          <h2 class="ists-section__title" id="sec-actions">Actions rapides</h2>
+          <a class="ists-section__link" href="#" data-action="TODO">Toutes les opérations <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-arrow"></use></svg></a>
+        </div>
+
+        <div class="ists-actions">
+          <button class="ists-action" type="button" data-action="TODO">
+            <span class="ists-action__icon"><svg class="ists-icon" aria-hidden="true"><use href="#ists-i-download"></use></svg></span>
+            <span class="ists-action__body">
+              <span class="ists-action__label">Télécharger une sauvegarde</span>
+              <span class="ists-action__desc">Exporter la base au format archive horodatée.</span>
+            </span>
+          </button>
+
+          <button class="ists-action" type="button" data-action="TODO">
+            <span class="ists-action__icon"><svg class="ists-icon" aria-hidden="true"><use href="#ists-i-refresh"></use></svg></span>
+            <span class="ists-action__body">
+              <span class="ists-action__label">Récupérer les étudiants</span>
+              <span class="ists-action__desc">Restaurer les dossiers et leurs données associées.</span>
+            </span>
+          </button>
+
+          <button class="ists-action" type="button" data-action="TODO">
+            <span class="ists-action__icon"><svg class="ists-icon" aria-hidden="true"><use href="#ists-i-history"></use></svg></span>
+            <span class="ists-action__body">
+              <span class="ists-action__label">Tout récupérer</span>
+              <span class="ists-action__desc">Restaurer l'ensemble des champs depuis l'historique complet des sauvegardes.</span>
+            </span>
+          </button>
+
+          <button class="ists-action" type="button" data-action="TODO">
+            <span class="ists-action__icon"><svg class="ists-icon" aria-hidden="true"><use href="#ists-i-shield"></use></svg></span>
+            <span class="ists-action__body">
+              <span class="ists-action__label">Auditer les dossiers</span>
+              <span class="ists-action__desc">Contrôler l'intégrité et repérer les champs manquants.</span>
+            </span>
+          </button>
+
+          <button class="ists-action" type="button" data-action="TODO">
+            <span class="ists-action__icon"><svg class="ists-icon" aria-hidden="true"><use href="#ists-i-upload"></use></svg></span>
+            <span class="ists-action__body">
+              <span class="ists-action__label">Importer une sauvegarde</span>
+              <span class="ists-action__desc">Charger une archive externe dans la base active.</span>
+            </span>
+          </button>
+
+          <button class="ists-action" type="button" data-action="TODO">
+            <span class="ists-action__icon"><svg class="ists-icon" aria-hidden="true"><use href="#ists-i-bell"></use></svg></span>
+            <span class="ists-action__body">
+              <span class="ists-action__label">Vérifier les demandes</span>
+              <span class="ists-action__desc">Examiner les nouvelles inscriptions et réclamations.</span>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Dossiers concernés -->
+      <section class="ists-section" aria-labelledby="sec-files">
+        <div class="ists-section__head">
+          <h2 class="ists-section__title" id="sec-files">Champs à compléter</h2>
+          <a class="ists-section__link" href="#" data-action="TODO">Voir les 25 champs <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-arrow"></use></svg></a>
+        </div>
+
+        <div class="ists-card" data-donnee-exemple="lignes du tableau : étudiant, matricule, champ, date de sauvegarde">
+          <div class="ists-tablewrap">
+            <table class="ists-table">
+              <caption class="ists-sr-only">Champs manquants par étudiant, avec leur origine</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Étudiant</th>
+                  <th scope="col">Matricule</th>
+                  <th scope="col">Champ à compléter</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ists-is-primary">NGONO Marie-Claire</td>
+                  <td data-label="Matricule" class="ists-mono">ISTS-2025-0148</td>
+                  <td data-label="Champ à compléter"><span class="ists-badge ists-badge--warn">Date de naissance</span></td>
+                  <td data-label="Source" class="ists-mono">12/09/2026</td>
+                  <td data-label="Action">
+                    <button class="ists-rowaction" type="button" data-action="TODO">Récupérer <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-arrow"></use></svg></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ists-is-primary">TCHOUAMO Jean-Paul</td>
+                  <td data-label="Matricule" class="ists-mono">ISTS-2024-0932</td>
+                  <td data-label="Champ à compléter"><span class="ists-badge ists-badge--warn">Lieu de naissance</span></td>
+                  <td data-label="Source" class="ists-mono">28/08/2026</td>
+                  <td data-label="Action">
+                    <button class="ists-rowaction" type="button" data-action="TODO">Récupérer <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-arrow"></use></svg></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ists-is-primary">MBALLA Estelle</td>
+                  <td data-label="Matricule" class="ists-mono">ISTS-2026-0057</td>
+                  <td data-label="Champ à compléter"><span class="ists-badge ists-badge--warn">Contact du tuteur</span></td>
+                  <td data-label="Source" class="ists-mono">04/09/2026</td>
+                  <td data-label="Action">
+                    <button class="ists-rowaction" type="button" data-action="TODO">Récupérer <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-arrow"></use></svg></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ists-is-primary">FOTSO Bertrand</td>
+                  <td data-label="Matricule" class="ists-mono">ISTS-2023-1187</td>
+                  <td data-label="Champ à compléter"><span class="ists-badge ists-badge--warn">Numéro de matricule</span></td>
+                  <td data-label="Source" class="ists-mono">19/07/2026</td>
+                  <td data-label="Action">
+                    <button class="ists-rowaction" type="button" data-action="TODO">Récupérer <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-arrow"></use></svg></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="ists-table__empty" style="border-top:1px solid var(--border)">
+            21 autres champs concernés — <a href="#">afficher la liste complète</a>
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Colonne latérale -->
+    <aside class="ists-aside" data-donnee-exemple="état de la base et activité récente">
+      <div class="ists-card">
+        <div class="ists-card__head">
+          <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-database"></use></svg>
+          <div>
+            <h2 class="ists-card__title">État de la base</h2>
+            <p class="ists-card__hint">Synchronisation du 1<sup>er</sup> octobre 2026</p>
+          </div>
+        </div>
+        <div class="ists-card__body">
+          <div class="ists-meter">
+            <div class="ists-meter__row"><span class="ists-meter__label">Dossiers complets</span><span class="ists-meter__value">96 %</span></div>
+            <div class="ists-meter__track"><div class="ists-meter__fill ists-meter__fill--warn" style="width:96%"></div></div>
+          </div>
+          <div class="ists-meter">
+            <div class="ists-meter__row"><span class="ists-meter__label">Sauvegardes vérifiées</span><span class="ists-meter__value">6 / 6</span></div>
+            <div class="ists-meter__track"><div class="ists-meter__fill ists-meter__fill--ok" style="width:100%"></div></div>
+          </div>
+          <div class="ists-meter">
+            <div class="ists-meter__row"><span class="ists-meter__label">Demandes traitées</span><span class="ists-meter__value">82 %</span></div>
+            <div class="ists-meter__track"><div class="ists-meter__fill" style="width:82%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ists-card">
+        <div class="ists-card__head">
+          <svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-history"></use></svg>
+          <h2 class="ists-card__title">Activité récente</h2>
+        </div>
+        <div class="ists-card__body">
+          <ul class="ists-timeline">
+            <li>
+              <span class="ists-timeline__dot"><svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-shield"></use></svg></span>
+              <div>
+                <p class="ists-timeline__text">Audit automatique terminé : 25 champs manquants signalés.</p>
+                <p class="ists-timeline__time">Aujourd'hui, 14 h 35</p>
+              </div>
+            </li>
+            <li>
+              <span class="ists-timeline__dot"><svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-upload"></use></svg></span>
+              <div>
+                <p class="ists-timeline__text">Sauvegarde <span class="ists-mono">lot-06</span> importée et contrôlée.</p>
+                <p class="ists-timeline__time">Aujourd'hui, 09 h 12</p>
+              </div>
+            </li>
+            <li>
+              <span class="ists-timeline__dot"><svg class="ists-icon ists-icon--sm" aria-hidden="true"><use href="#ists-i-check"></use></svg></span>
+              <div>
+                <p class="ists-timeline__text">12 dossiers complétés par le service de la scolarité.</p>
+                <p class="ists-timeline__time">Hier, 17 h 48</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
